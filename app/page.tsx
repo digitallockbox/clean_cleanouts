@@ -10,7 +10,7 @@ import { useWebsiteSettings } from '@/contexts/website-settings';
 import { Truck, Clock, Shield, Star, Phone, CheckCircle, ArrowRight, Sparkles, Award, Users } from 'lucide-react';
 
 export default function Home() {
-  const { settings } = useWebsiteSettings();
+  const { settings, loading: settingsLoading } = useWebsiteSettings();
 
   const services = [
     {
@@ -58,7 +58,7 @@ export default function Home() {
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat transform scale-105"
           style={{
-            backgroundImage: `linear-gradient(135deg, rgba(59, 130, 246, 0.9), rgba(147, 51, 234, 0.8)), url(${settings.heroImage})`
+            backgroundImage: `linear-gradient(135deg, rgba(59, 130, 246, 0.9), rgba(147, 51, 234, 0.8)), url(${settings.hero_background_image})`
           }}
         />
         
@@ -76,16 +76,25 @@ export default function Home() {
               #1 Rated Cleanout Service
             </div>
             
-            <h1 className="text-5xl md:text-7xl font-black mb-6 leading-tight">
-              <span className="block">{settings.heroTitle.split(' ').slice(0, 2).join(' ')}</span>
-              <span className="block text-gradient bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent">
-                {settings.heroTitle.split(' ').slice(2).join(' ')}
-              </span>
-            </h1>
-            
-            <p className="text-xl md:text-2xl mb-10 max-w-4xl mx-auto leading-relaxed text-blue-50">
-              {settings.heroSubtitle}
-            </p>
+            {settingsLoading ? (
+              <>
+                <div className="h-16 md:h-20 w-3/4 mx-auto bg-white/20 animate-pulse rounded-lg mb-6" />
+                <div className="h-8 w-2/3 mx-auto bg-white/20 animate-pulse rounded-lg mb-10" />
+              </>
+            ) : (
+              <>
+                <h1 className="text-5xl md:text-7xl font-black mb-6 leading-tight">
+                  <span className="block">{settings.hero_title.split(' ').slice(0, 2).join(' ')}</span>
+                  <span className="block text-gradient bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent">
+                    {settings.hero_title.split(' ').slice(2).join(' ')}
+                  </span>
+                </h1>
+                
+                <p className="text-xl md:text-2xl mb-10 max-w-4xl mx-auto leading-relaxed text-blue-50">
+                  {settings.hero_subtitle}
+                </p>
+              </>
+            )}
             
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
               <Button
@@ -171,12 +180,12 @@ export default function Home() {
                     <div
                       className="w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:shadow-glow transition-all duration-300 transform group-hover:scale-110"
                       style={{
-                        background: `linear-gradient(135deg, ${settings.primaryColor}20, ${settings.primaryColor}40)`
+                        background: `linear-gradient(135deg, ${settings.theme_primary_color}20, ${settings.theme_primary_color}40)`
                       }}
                     >
                       <service.icon
                         className="h-10 w-10 group-hover:scale-110 transition-transform duration-300"
-                        style={{ color: settings.primaryColor }}
+                        style={{ color: settings.theme_primary_color }}
                       />
                     </div>
                     {/* Floating badge */}
@@ -326,9 +335,9 @@ export default function Home() {
               className="text-lg px-12 py-4 border-white/30 text-black hover:bg-white/20 backdrop-blur-sm glass group font-semibold"
               asChild
             >
-              <Link href={`tel:${settings.contactPhone}`}>
+              <Link href={`tel:${settings.contact_phone}`}>
                 <Phone className="mr-2 h-5 w-5 group-hover:rotate-12 transition-transform" />
-                Call {settings.contactPhone}
+                Call {settings.contact_phone}
               </Link>
             </Button>
           </div>

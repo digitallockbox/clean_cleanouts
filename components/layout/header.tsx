@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
-import { useWebsiteSettings } from '@/contexts/website-settings';
+import { useLegacySettings, useWebsiteSettings } from '@/contexts/website-settings';
 import { signOut, isAdmin } from '@/lib/auth';
 import {
   DropdownMenu,
@@ -19,7 +19,8 @@ import { toast } from 'sonner';
 
 export const Header: React.FC = () => {
   const { user, loading } = useAuth();
-  const { settings } = useWebsiteSettings();
+  const settings = useLegacySettings();
+  const { loading: settingsLoading } = useWebsiteSettings();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -61,19 +62,27 @@ export const Header: React.FC = () => {
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-3 group">
             <div className="relative">
-              <img
-                src={settings.logoUrl}
-                alt={settings.siteName}
-                className="h-10 w-10 rounded-xl object-cover shadow-md group-hover:shadow-lg transition-all duration-300"
-              />
+              {settingsLoading ? (
+                <div className="h-10 w-10 rounded-xl bg-gradient-to-r from-gray-200 to-gray-300 animate-pulse shadow-md" />
+              ) : (
+                <img
+                  src={settings.logoUrl || 'https://images.pexels.com/photos/4099354/pexels-photo-4099354.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop'}
+                  alt={settings.siteName || 'Logo'}
+                  className="h-10 w-10 rounded-xl object-cover shadow-md group-hover:shadow-lg transition-all duration-300"
+                />
+              )}
               <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
                 <Sparkles className="w-2 h-2 text-white" />
               </div>
             </div>
             <div className="flex flex-col">
-              <span className="text-xl font-black text-gradient group-hover:scale-105 transition-transform duration-300">
-                {settings.siteName}
-              </span>
+              {settingsLoading ? (
+                <div className="h-6 w-32 bg-gradient-to-r from-gray-200 to-gray-300 animate-pulse rounded" />
+              ) : (
+                <span className="text-xl font-black text-gradient group-hover:scale-105 transition-transform duration-300">
+                  {settings.siteName || 'Loading...'}
+                </span>
+              )}
               <span className="text-xs text-gray-500 font-medium -mt-1">Professional Service</span>
             </div>
           </Link>
