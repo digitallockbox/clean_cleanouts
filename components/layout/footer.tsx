@@ -37,22 +37,22 @@ export const Footer: React.FC = () => {
             <div className="flex items-center space-x-3 mb-6">
               <div className="relative">
                 <img
-                  src={settings.logoUrl}
-                  alt={settings.siteName}
+                  src={settings.brand_logo_url}
+                  alt={settings.brand_company_name}
                   className="h-12 w-12 rounded-xl object-cover shadow-lg"
                 />
                 <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full"></div>
               </div>
               <div>
                 <span className="text-2xl font-black text-gradient bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                  {settings.siteName}
+                  {settings.brand_company_name}
                 </span>
                 <p className="text-sm text-gray-400 font-medium">Professional Service Excellence</p>
               </div>
             </div>
             
             <p className="text-gray-300 mb-6 leading-relaxed max-w-md">
-              {settings.siteDescription}. We're committed to providing exceptional service with every project,
+              {settings.brand_tagline}. We're committed to providing exceptional service with every project,
               ensuring your complete satisfaction.
             </p>
             
@@ -62,7 +62,7 @@ export const Footer: React.FC = () => {
                   <Phone className="h-5 w-5 text-white" />
                 </div>
                 <div>
-                  <p className="font-medium">{settings.contactPhone}</p>
+                  <p className="font-medium">{settings.contact_phone}</p>
                   <p className="text-sm text-gray-400">Call us anytime</p>
                 </div>
               </div>
@@ -72,7 +72,7 @@ export const Footer: React.FC = () => {
                   <Mail className="h-5 w-5 text-white" />
                 </div>
                 <div>
-                  <p className="font-medium">{settings.contactEmail}</p>
+                  <p className="font-medium">{settings.contact_email}</p>
                   <p className="text-sm text-gray-400">Email support</p>
                 </div>
               </div>
@@ -82,7 +82,7 @@ export const Footer: React.FC = () => {
                   <MapPin className="h-5 w-5 text-white" />
                 </div>
                 <div>
-                  <p className="font-medium">{settings.address}</p>
+                  <p className="font-medium">{settings.contact_address}</p>
                   <p className="text-sm text-gray-400">Service area</p>
                 </div>
               </div>
@@ -169,7 +169,7 @@ export const Footer: React.FC = () => {
           {/* Copyright */}
           <div className="text-center">
             <p className="text-gray-400 mb-2">
-              © 2024 {settings.siteName}. All rights reserved.
+              © 2024 {settings.brand_company_name}. All rights reserved.
             </p>
             <p className="text-sm text-gray-500 flex items-center justify-center">
               Made with <Heart className="h-4 w-4 mx-1 text-red-500" /> for our amazing customers

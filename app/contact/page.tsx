@@ -80,25 +80,25 @@ export default function Contact() {
     {
       icon: Phone,
       title: 'Phone',
-      value: settings.contactPhone,
-      href: `tel:${settings.contactPhone}`,
+      value: settings.contact_phone,
+      href: `tel:${settings.contact_phone}`,
     },
     {
       icon: Mail,
       title: 'Email',
-      value: settings.contactEmail,
-      href: `mailto:${settings.contactEmail}`,
+      value: settings.contact_email,
+      href: `mailto:${settings.contact_email}`,
     },
     {
       icon: MapPin,
       title: 'Address',
-      value: settings.address,
-      href: `https://maps.google.com/?q=${encodeURIComponent(settings.address)}`,
+      value: settings.contact_address,
+      href: `https://maps.google.com/?q=${encodeURIComponent(settings.contact_address)}`,
     },
     {
       icon: Clock,
       title: 'Business Hours',
-      value: 'Mon-Fri: 8AM-6PM\nSat: 9AM-4PM\nSun: Closed',
+      value: settings.contact_hours,
       href: null,
     },
   ];
@@ -173,12 +173,12 @@ export default function Contact() {
                       <div
                         className="flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center shadow-md group-hover:shadow-glow transition-all duration-300"
                         style={{
-                          background: `linear-gradient(135deg, ${settings.primaryColor}20, ${settings.primaryColor}40)`
+                          background: `linear-gradient(135deg, ${settings.theme_primary_color}20, ${settings.theme_primary_color}40)`
                         }}
                       >
                         <info.icon
                           className="h-6 w-6 group-hover:scale-110 transition-transform duration-300"
-                          style={{ color: settings.primaryColor }}
+                          style={{ color: settings.theme_primary_color }}
                         />
                       </div>
                       <div className="flex-1">
@@ -392,9 +392,9 @@ export default function Contact() {
                   Need urgent service? Call us directly for same-day availability and emergency support.
                 </p>
                 <Button className="btn-gradient shadow-lg group" asChild>
-                  <a href={`tel:${settings.contactPhone}`}>
+                  <a href={`tel:${settings.contact_phone}`}>
                     <Zap className="mr-2 h-4 w-4 group-hover:scale-110 transition-transform" />
-                    Call {settings.contactPhone}
+                    Call {settings.contact_phone}
                   </a>
                 </Button>
               </div>
@@ -436,7 +436,7 @@ export default function Contact() {
                   Questions? We're here to help around the clock with expert guidance and support.
                 </p>
                 <Button className="btn-gradient shadow-lg group" asChild>
-                  <a href={`mailto:${settings.contactEmail}`}>
+                  <a href={`mailto:${settings.contact_email}`}>
                     <Users className="mr-2 h-4 w-4 group-hover:scale-110 transition-transform" />
                     Email Support
                   </a>

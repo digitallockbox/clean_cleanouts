@@ -78,12 +78,12 @@ export default function Services() {
                     <div
                       className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4 shadow-lg group-hover:shadow-glow transition-all duration-300"
                       style={{
-                        background: `linear-gradient(135deg, ${settings.primaryColor}20, ${settings.primaryColor}40)`
+                        background: `linear-gradient(135deg, ${settings.theme_primary_color}20, ${settings.theme_primary_color}40)`
                       }}
                     >
                       <feature.icon
                         className="h-8 w-8 group-hover:scale-110 transition-transform duration-300"
-                        style={{ color: settings.primaryColor }}
+                        style={{ color: settings.theme_primary_color }}
                       />
                     </div>
                     <span className="text-sm font-bold text-gray-800 text-center leading-tight">{feature.text}</span>
