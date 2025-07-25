@@ -6,7 +6,7 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useWebsiteSettings } from '@/contexts/website-settings';
+import { useWebsiteSettings } from '@/contexts/website-settings-extended';
 import { Truck, Clock, Shield, Star, Phone, CheckCircle, ArrowRight, Sparkles, Award, Users } from 'lucide-react';
 
 export default function Home() {
@@ -33,13 +33,14 @@ export default function Home() {
     },
   ];
 
+  // Get features from settings
   const features = [
-    'Licensed & Insured',
-    'Same Day Service',
-    'Eco-Friendly Disposal',
-    'Upfront Pricing',
-    'Professional Team',
-    '100% Satisfaction Guarantee',
+    settings.home_why_choose_feature_1,
+    settings.home_why_choose_feature_2,
+    settings.home_why_choose_feature_3,
+    settings.home_why_choose_feature_4,
+    settings.home_why_choose_feature_5,
+    settings.home_why_choose_feature_6,
   ];
 
   const [isVisible, setIsVisible] = useState(false);
@@ -58,7 +59,7 @@ export default function Home() {
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat transform scale-105"
           style={{
-            backgroundImage: `linear-gradient(135deg, rgba(59, 130, 246, 0.9), rgba(147, 51, 234, 0.8)), url(${settings.hero_background_image})`
+            backgroundImage: `var(--gradient-primary), url(${settings.hero_background_image})`
           }}
         />
         
@@ -103,7 +104,7 @@ export default function Home() {
                 asChild
               >
                 <Link href="/booking">
-                  Book Now
+                  {settings.hero_cta_text || 'Book Now'}
                   <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </Button>
@@ -116,7 +117,7 @@ export default function Home() {
               >
                 <Link href="/contact">
                   <Phone className="mr-2 h-5 w-5 group-hover:rotate-12 transition-transform" />
-                  Get Free Quote
+                  {settings.hero_secondary_cta_text || 'Get Free Quote'}
                 </Link>
               </Button>
             </div>
@@ -124,16 +125,16 @@ export default function Home() {
             {/* Trust indicators */}
             <div className="mt-16 grid grid-cols-3 gap-8 max-w-2xl mx-auto">
               <div className="text-center">
-                <div className="text-3xl font-bold">500+</div>
-                <div className="text-sm text-blue-200">Happy Customers</div>
+                <div className="text-3xl font-bold">{settings.home_hero_trust_1_number}</div>
+                <div className="text-sm text-blue-200">{settings.home_hero_trust_1_label}</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold">24/7</div>
-                <div className="text-sm text-blue-200">Available Service</div>
+                <div className="text-3xl font-bold">{settings.home_hero_trust_2_number}</div>
+                <div className="text-sm text-blue-200">{settings.home_hero_trust_2_label}</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold">100%</div>
-                <div className="text-sm text-blue-200">Satisfaction</div>
+                <div className="text-3xl font-bold">{settings.home_hero_trust_3_number}</div>
+                <div className="text-sm text-blue-200">{settings.home_hero_trust_3_label}</div>
               </div>
             </div>
           </div>
@@ -162,10 +163,10 @@ export default function Home() {
               Premium Services
             </div>
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-              Our <span className="text-gradient">Expert Services</span>
+              {settings.services_title || 'Our'} <span className="text-gradient">{settings.services_subtitle || 'Expert Services'}</span>
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              Professional cleanout and moving services tailored to your needs with unmatched quality and reliability
+              {settings.services_description || 'Professional cleanout and moving services tailored to your needs with unmatched quality and reliability'}
             </p>
           </div>
 
@@ -232,13 +233,13 @@ export default function Home() {
           <div className="text-center mb-16">
             <div className="inline-flex items-center px-4 py-2 bg-green-100 text-green-800 rounded-full text-sm font-medium mb-4">
               <Award className="w-4 h-4 mr-2" />
-              Why Choose Us
+              {settings.home_why_choose_badge}
             </div>
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-              Trusted by <span className="text-gradient-warm">Thousands</span>
+              {settings.home_why_choose_title} <span className="text-gradient-warm">{settings.home_why_choose_title_highlight}</span>
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              We're committed to providing exceptional service with every job, backed by years of experience and countless satisfied customers
+              {settings.home_why_choose_description}
             </p>
           </div>
 
@@ -267,20 +268,20 @@ export default function Home() {
           {/* Stats section */}
           <div className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8">
             <div className="text-center">
-              <div className="text-4xl font-black text-gradient mb-2">500+</div>
-              <div className="text-gray-600 font-medium">Projects Completed</div>
+              <div className="text-4xl font-black text-gradient mb-2">{settings.home_stat_1_number}</div>
+              <div className="text-gray-600 font-medium">{settings.home_stat_1_label}</div>
             </div>
             <div className="text-center">
-              <div className="text-4xl font-black text-gradient mb-2">98%</div>
-              <div className="text-gray-600 font-medium">Customer Satisfaction</div>
+              <div className="text-4xl font-black text-gradient mb-2">{settings.home_stat_2_number}</div>
+              <div className="text-gray-600 font-medium">{settings.home_stat_2_label}</div>
             </div>
             <div className="text-center">
-              <div className="text-4xl font-black text-gradient mb-2">24/7</div>
-              <div className="text-gray-600 font-medium">Support Available</div>
+              <div className="text-4xl font-black text-gradient mb-2">{settings.home_stat_3_number}</div>
+              <div className="text-gray-600 font-medium">{settings.home_stat_3_label}</div>
             </div>
             <div className="text-center">
-              <div className="text-4xl font-black text-gradient mb-2">5★</div>
-              <div className="text-gray-600 font-medium">Average Rating</div>
+              <div className="text-4xl font-black text-gradient mb-2">{settings.home_stat_4_number}</div>
+              <div className="text-gray-600 font-medium">{settings.home_stat_4_label}</div>
             </div>
           </div>
         </div>
@@ -304,16 +305,16 @@ export default function Home() {
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="inline-flex items-center px-6 py-3 bg-white/20 backdrop-blur-sm rounded-full text-white font-medium mb-6 glass">
             <Users className="w-5 h-5 mr-2" />
-            Join 500+ Satisfied Customers
+            {settings.home_cta_badge}
           </div>
           
           <h2 className="text-4xl md:text-6xl font-black text-white mb-6 leading-tight">
-            Ready to Get <span className="text-yellow-300">Started?</span>
+            {settings.cta_title || 'Ready to Get'} <span className="text-yellow-300">{settings.cta_title ? settings.cta_title.split(' ').slice(-1)[0] : 'Started?'}</span>
           </h2>
           
           <p className="text-xl md:text-2xl text-white/90 mb-12 max-w-3xl mx-auto leading-relaxed">
-            Book your service today and experience the difference professional cleanout services can make.
-            <span className="block mt-2 text-yellow-300 font-semibold">Free estimates • Same-day service • 100% satisfaction guaranteed</span>
+            {settings.cta_description || 'Book your service today and experience the difference professional cleanout services can make.'}
+            <span className="block mt-2 text-yellow-300 font-semibold">{settings.home_cta_guarantee}</span>
           </p>
           
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
@@ -324,7 +325,7 @@ export default function Home() {
             >
               <Link href="/booking">
                 <Sparkles className="mr-2 h-5 w-5" />
-                Schedule Service Now
+                {settings.home_cta_primary_button}
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Link>
             </Button>
@@ -337,7 +338,7 @@ export default function Home() {
             >
               <Link href={`tel:${settings.contact_phone}`}>
                 <Phone className="mr-2 h-5 w-5 group-hover:rotate-12 transition-transform" />
-                Call {settings.contact_phone}
+                {settings.home_cta_secondary_button} {settings.contact_phone}
               </Link>
             </Button>
           </div>
@@ -346,15 +347,15 @@ export default function Home() {
           <div className="mt-16 flex flex-wrap justify-center items-center gap-8 opacity-80">
             <div className="flex items-center text-white/80">
               <Shield className="w-5 h-5 mr-2" />
-              <span className="text-sm font-medium">Licensed & Insured</span>
+              <span className="text-sm font-medium">{settings.home_cta_trust_1}</span>
             </div>
             <div className="flex items-center text-white/80">
               <Clock className="w-5 h-5 mr-2" />
-              <span className="text-sm font-medium">24/7 Available</span>
+              <span className="text-sm font-medium">{settings.home_cta_trust_2}</span>
             </div>
             <div className="flex items-center text-white/80">
               <Award className="w-5 h-5 mr-2" />
-              <span className="text-sm font-medium">5-Star Rated</span>
+              <span className="text-sm font-medium">{settings.home_cta_trust_3}</span>
             </div>
           </div>
         </div>

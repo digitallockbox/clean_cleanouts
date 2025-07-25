@@ -20,6 +20,7 @@ import { useBookings } from '@/hooks/use-bookings';
 import { BOOKING_STATUS_COLORS, PAYMENT_STATUS_COLORS, TIME_SLOTS, DURATION_OPTIONS } from '@/lib/constants';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
+import { logger } from '@/lib/logger';
 import {
   Calendar as CalendarIcon,
   Clock,
@@ -108,7 +109,7 @@ export default function Bookings() {
       setIsEditDialogOpen(false);
       setSelectedBooking(null);
     } catch (error) {
-      console.error('Error updating booking:', error);
+      logger.error('Error updating booking:', error);
     } finally {
       setIsUpdating(false);
     }
@@ -123,7 +124,7 @@ export default function Bookings() {
       setIsCancelDialogOpen(false);
       setSelectedBooking(null);
     } catch (error) {
-      console.error('Error cancelling booking:', error);
+      logger.error('Error cancelling booking:', error);
     } finally {
       setIsCancelling(false);
     }

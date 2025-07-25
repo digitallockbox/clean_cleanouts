@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { toast } from 'sonner';
+import { logger } from '@/lib/logger';
 
 export interface Review {
   id: string;
@@ -64,7 +65,7 @@ export const useReviews = (options: UseReviewsOptions = {}) => {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch reviews';
       setError(errorMessage);
-      console.error('Error fetching reviews:', err);
+      logger.error('Error fetching reviews:', err);
     } finally {
       setLoading(false);
     }

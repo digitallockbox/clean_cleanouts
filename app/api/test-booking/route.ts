@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { logger } from '@/lib/logger';
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     
-    console.log('=== TEST BOOKING API ===');
-    console.log('Received data:', JSON.stringify(body, null, 2));
+    logger.info('=== TEST BOOKING API ===');
+    logger.info('Received data:', JSON.stringify(body, null, 2));
     
     // Simulate a successful booking creation
     const mockBooking = {
@@ -16,8 +17,8 @@ export async function POST(request: NextRequest) {
       created_at: new Date().toISOString(),
     };
     
-    console.log('=== RETURNING MOCK BOOKING ===');
-    console.log('Mock booking:', JSON.stringify(mockBooking, null, 2));
+    logger.info('=== RETURNING MOCK BOOKING ===');
+    logger.info('Mock booking:', JSON.stringify(mockBooking, null, 2));
     
     return NextResponse.json({
       success: true,
@@ -26,8 +27,8 @@ export async function POST(request: NextRequest) {
     }, { status: 201 });
     
   } catch (error) {
-    console.error('=== TEST API ERROR ===');
-    console.error('Error:', error);
+    logger.error('=== TEST API ERROR ===');
+    logger.error('Error:', error);
     return NextResponse.json({ 
       error: 'Test API error',
       details: error instanceof Error ? error.message : 'Unknown error'

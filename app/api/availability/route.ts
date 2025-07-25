@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { BOOKING_STATUSES, TIME_SLOTS } from '@/lib/constants';
+import { logger } from '@/lib/logger';
 
 // Create Supabase client for server-side operations
 const supabase = createClient(
@@ -248,7 +249,7 @@ export async function GET(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('API Error:', error);
+    logger.error('API Error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -359,7 +360,7 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('API Error:', error);
+    logger.error('API Error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -398,11 +399,11 @@ export async function DELETE(request: NextRequest) {
       });
       
       keysToDelete.forEach(key => availabilityCache.delete(key));
-      console.log(`Cleared ${keysToDelete.length} cache entries for date ${date}${serviceId ? ` and service ${serviceId}` : ''}`);
+      logger.info(`Cleared ${keysToDelete.length} cache entries for date ${date}${serviceId ? ` and service ${serviceId}` : ''}`);
     } else {
       // Clear all cache
       availabilityCache.clear();
-      console.log('Cleared all availability cache');
+      logger.info('Cleared all availability cache');
     }
     
     return NextResponse.json({
@@ -410,7 +411,7 @@ export async function DELETE(request: NextRequest) {
       message: 'Cache cleared successfully',
     });
   } catch (error) {
-    console.error('Error clearing cache:', error);
+    logger.error('Error clearing cache:', error);
     return NextResponse.json({ error: 'Failed to clear cache' }, { status: 500 });
   }
 }

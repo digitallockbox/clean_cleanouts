@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { updateBookingSchema } from '@/lib/validations/booking';
 import { BOOKING_STATUSES } from '@/lib/constants';
+import { logger } from '@/lib/logger';
 
 // Helper function to create notifications
 async function createNotification(userId: string, title: string, message: string, type: 'info' | 'success' | 'warning' | 'error' = 'info') {
@@ -14,7 +15,7 @@ async function createNotification(userId: string, title: string, message: string
       read: false,
     });
   } catch (error) {
-    console.error('Error creating notification:', error);
+    logger.error('Error creating notification:', error);
   }
 }
 
@@ -53,7 +54,7 @@ export async function GET(
       if (error.code === 'PGRST116') {
         return NextResponse.json({ error: 'Booking not found' }, { status: 404 });
       }
-      console.error('Error fetching booking:', error);
+      logger.error('Error fetching booking:', error);
       return NextResponse.json({ error: 'Failed to fetch booking' }, { status: 500 });
     }
 
@@ -63,7 +64,7 @@ export async function GET(
     });
 
   } catch (error) {
-    console.error('API Error:', error);
+    logger.error('API Error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -99,7 +100,7 @@ export async function PUT(
       if (fetchError.code === 'PGRST116') {
         return NextResponse.json({ error: 'Booking not found' }, { status: 404 });
       }
-      console.error('Error fetching booking:', fetchError);
+      logger.error('Error fetching booking:', fetchError);
       return NextResponse.json({ error: 'Failed to fetch booking' }, { status: 500 });
     }
 
@@ -183,7 +184,7 @@ export async function PUT(
       .single();
 
     if (updateError) {
-      console.error('Error updating booking:', updateError);
+      logger.error('Error updating booking:', updateError);
       return NextResponse.json({ error: 'Failed to update booking' }, { status: 500 });
     }
 
@@ -218,7 +219,7 @@ export async function PUT(
     });
 
   } catch (error) {
-    console.error('API Error:', error);
+    logger.error('API Error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -242,7 +243,7 @@ export async function DELETE(
       if (fetchError.code === 'PGRST116') {
         return NextResponse.json({ error: 'Booking not found' }, { status: 404 });
       }
-      console.error('Error fetching booking:', fetchError);
+      logger.error('Error fetching booking:', fetchError);
       return NextResponse.json({ error: 'Failed to fetch booking' }, { status: 500 });
     }
 
@@ -281,7 +282,7 @@ export async function DELETE(
       .single();
 
     if (cancelError) {
-      console.error('Error cancelling booking:', cancelError);
+      logger.error('Error cancelling booking:', cancelError);
       return NextResponse.json({ error: 'Failed to cancel booking' }, { status: 500 });
     }
 
@@ -300,7 +301,7 @@ export async function DELETE(
     });
 
   } catch (error) {
-    console.error('API Error:', error);
+    logger.error('API Error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

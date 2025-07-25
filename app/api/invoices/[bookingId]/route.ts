@@ -40,6 +40,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { generateInvoicePDF, InvoiceData } from '@/lib/pdf-generator';
+import { logger } from '@/lib/logger';
 
 // Create Supabase client for server-side operations
 const supabase = createClient(
@@ -131,7 +132,7 @@ export async function GET(
     });
 
   } catch (error) {
-    console.error('Invoice generation error:', error);
+    logger.error('Invoice generation error:', error);
     return NextResponse.json({ error: 'Failed to generate invoice' }, { status: 500 });
   }
 }
@@ -217,7 +218,7 @@ export async function POST(
     return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
 
   } catch (error) {
-    console.error('Invoice API error:', error);
+    logger.error('Invoice API error:', error);
     return NextResponse.json({ error: 'Failed to process invoice request' }, { status: 500 });
   }
 }

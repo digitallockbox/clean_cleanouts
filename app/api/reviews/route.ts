@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { getCurrentUser } from '@/lib/auth';
 import { z } from 'zod';
+import { logger } from '@/lib/logger';
 
 // Create Supabase client for server-side operations
 const supabase = createClient(
@@ -28,7 +29,7 @@ async function createNotification(userId: string, title: string, message: string
       read: false,
     });
   } catch (error) {
-    console.error('Error creating notification:', error);
+    logger.error('Error creating notification:', error);
   }
 }
 
@@ -85,7 +86,7 @@ export async function GET(request: NextRequest) {
     const { data: reviews, error, count } = await query;
 
     if (error) {
-      console.error('Error fetching reviews:', error);
+      logger.error('Error fetching reviews:', error);
       return NextResponse.json({ error: 'Failed to fetch reviews' }, { status: 500 });
     }
 
@@ -106,7 +107,7 @@ export async function GET(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('API Error:', error);
+    logger.error('API Error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -194,7 +195,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (reviewError) {
-      console.error('Error creating review:', reviewError);
+      logger.error('Error creating review:', reviewError);
       return NextResponse.json({ error: 'Failed to create review' }, { status: 500 });
     }
 
@@ -213,7 +214,7 @@ export async function POST(request: NextRequest) {
     }, { status: 201 });
 
   } catch (error) {
-    console.error('API Error:', error);
+    logger.error('API Error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

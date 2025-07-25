@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { logger } from '@/lib/logger';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
@@ -39,13 +40,13 @@ export async function GET(request: NextRequest) {
     const { data: notifications, error } = await query;
 
     if (error) {
-      console.error('Error fetching notifications:', error);
+      logger.error('Error fetching notifications:', error);
       return NextResponse.json({ error: 'Failed to fetch notifications' }, { status: 500 });
     }
 
     return NextResponse.json({ notifications });
   } catch (error) {
-    console.error('Error in notifications API:', error);
+    logger.error('Error in notifications API:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -85,13 +86,13 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error) {
-      console.error('Error creating notification:', error);
+      logger.error('Error creating notification:', error);
       return NextResponse.json({ error: 'Failed to create notification' }, { status: 500 });
     }
 
     return NextResponse.json({ notification }, { status: 201 });
   } catch (error) {
-    console.error('Error in notifications API:', error);
+    logger.error('Error in notifications API:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

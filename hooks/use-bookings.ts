@@ -7,6 +7,7 @@ import { useAuth } from './use-auth';
 import { invalidatePaymentHistoryCache } from './use-payment-history';
 import { invalidateUserPreferencesCache } from './use-user-preferences';
 import { toast } from 'sonner';
+import { logger } from '@/lib/logger';
 
 interface UseBookingsOptions {
   filters?: BookingFilters;
@@ -59,7 +60,7 @@ export function useBookings(options: UseBookingsOptions = {}): UseBookingsReturn
 
   const fetchBookings = useCallback(async (forceRefresh = false) => {
     if (!user) {
-      console.log('No user found, skipping booking fetch');
+      logger.info('No user found, skipping booking fetch');
       return;
     }
 
@@ -69,7 +70,7 @@ export function useBookings(options: UseBookingsOptions = {}): UseBookingsReturn
     
     // Check if we have valid cached data and don't need to force refresh
     if (!forceRefresh && cached && (now - cached.timestamp) < cacheTime) {
-      console.log('Using cached bookings data');
+      logger.info('Using cached bookings data');
       setBookings(cached.data);
       setTotalCount(cached.totalCount);
       setIsStale(false);
@@ -78,11 +79,11 @@ export function useBookings(options: UseBookingsOptions = {}): UseBookingsReturn
 
     // Check if we should skip fetching if we just fetched recently (prevent rapid refetches)
     if (!forceRefresh && (now - lastFetchRef.current) < 1000) {
-      console.log('Skipping fetch - too recent');
+      logger.info('Skipping fetch - too recent');
       return;
     }
 
-    console.log('Fetching bookings for user:', user.id);
+    logger.info('Fetching bookings for user:', user.id);
     setLoading(true);
     setError(null);
     lastFetchRef.current = now;
@@ -91,11 +92,11 @@ export function useBookings(options: UseBookingsOptions = {}): UseBookingsReturn
       // First, verify we have a valid session
       const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       if (sessionError || !session) {
-        console.error('No valid session found:', sessionError);
+        logger.error('No valid session found:', sessionError);
         throw new Error('Authentication required');
       }
 
-      console.log('Valid session found, proceeding with query');
+      logger.info('Valid session found, proceeding with query');
 
       let query = supabase
         .from('bookings')
@@ -150,7 +151,7 @@ export function useBookings(options: UseBookingsOptions = {}): UseBookingsReturn
       const to = from + limit - 1;
       query = query.range(from, to);
 
-      console.log('Executing query with filters:', { 
+      logger.info('Executing query with filters:', { 
         userId: user.id, 
         isAdmin: user.email === 'admin@cleanouts.com',
         filters 
@@ -159,12 +160,12 @@ export function useBookings(options: UseBookingsOptions = {}): UseBookingsReturn
       const { data, error: fetchError, count } = await query;
 
       if (fetchError) {
-        console.error('Supabase query error:', fetchError);
+        logger.error('Supabase query error:', fetchError);
         throw fetchError;
       }
 
-      console.log('Query successful. Found bookings:', data?.length || 0);
-      console.log('Total count:', count);
+      logger.info('Query successful. Found bookings:', data?.length || 0);
+      logger.info('Total count:', count);
 
       const bookingsData = data || [];
       const totalCountData = count || 0;
@@ -182,7 +183,7 @@ export function useBookings(options: UseBookingsOptions = {}): UseBookingsReturn
       setIsStale(false);
 
     } catch (err) {
-      console.error('Error fetching bookings:', err);
+      logger.error('Error fetching bookings:', err);
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch bookings';
       setError(errorMessage);
       toast.error(errorMessage);
@@ -231,9 +232,9 @@ export function useBookings(options: UseBookingsOptions = {}): UseBookingsReturn
       const result = await response.json();
 
       if (!response.ok) {
-        console.error('Booking creation failed:', result);
+        logger.error('Booking creation failed:', result);
         if (result.details) {
-          console.error('Validation details:', result.details);
+          logger.error('Validation details:', result.details);
         }
         throw new Error(result.error || 'Failed to create booking');
       }
@@ -244,7 +245,7 @@ export function useBookings(options: UseBookingsOptions = {}): UseBookingsReturn
       return result.data;
 
     } catch (err) {
-      console.error('Error creating booking:', err);
+      logger.error('Error creating booking:', err);
       toast.error(err instanceof Error ? err.message : 'Failed to create booking');
       return null;
     }
@@ -276,7 +277,7 @@ export function useBookings(options: UseBookingsOptions = {}): UseBookingsReturn
       return result.data;
 
     } catch (err) {
-      console.error('Error updating booking:', err);
+      logger.error('Error updating booking:', err);
       toast.error(err instanceof Error ? err.message : 'Failed to update booking');
       return null;
     }
@@ -306,7 +307,7 @@ export function useBookings(options: UseBookingsOptions = {}): UseBookingsReturn
       return true;
 
     } catch (err) {
-      console.error('Error cancelling booking:', err);
+      logger.error('Error cancelling booking:', err);
       toast.error(err instanceof Error ? err.message : 'Failed to cancel booking');
       return false;
     }
@@ -367,7 +368,7 @@ export function useBooking(id: string) {
       setBooking(result.data);
 
     } catch (err) {
-      console.error('Error fetching booking:', err);
+      logger.error('Error fetching booking:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch booking');
     } finally {
       setLoading(false);

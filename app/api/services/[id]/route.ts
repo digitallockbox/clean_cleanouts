@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { serviceSchema } from '@/lib/validations/booking';
+import { logger } from '@/lib/logger';
 
 // Create Supabase client for server-side operations
 const supabase = createClient(
@@ -33,7 +34,7 @@ export async function GET(
       if (error.code === 'PGRST116') {
         return NextResponse.json({ error: 'Service not found' }, { status: 404 });
       }
-      console.error('Error fetching service:', error);
+      logger.error('Error fetching service:', error);
       return NextResponse.json({ error: 'Failed to fetch service' }, { status: 500 });
     }
 
@@ -43,7 +44,7 @@ export async function GET(
     });
 
   } catch (error) {
-    console.error('API Error:', error);
+    logger.error('API Error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -79,7 +80,7 @@ export async function PUT(
       if (fetchError.code === 'PGRST116') {
         return NextResponse.json({ error: 'Service not found' }, { status: 404 });
       }
-      console.error('Error fetching service:', fetchError);
+      logger.error('Error fetching service:', fetchError);
       return NextResponse.json({ error: 'Failed to fetch service' }, { status: 500 });
     }
 
@@ -108,7 +109,7 @@ export async function PUT(
       .single();
 
     if (updateError) {
-      console.error('Error updating service:', updateError);
+      logger.error('Error updating service:', updateError);
       return NextResponse.json({ error: 'Failed to update service' }, { status: 500 });
     }
 
@@ -119,7 +120,7 @@ export async function PUT(
     });
 
   } catch (error) {
-    console.error('API Error:', error);
+    logger.error('API Error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -143,7 +144,7 @@ export async function DELETE(
       if (fetchError.code === 'PGRST116') {
         return NextResponse.json({ error: 'Service not found' }, { status: 404 });
       }
-      console.error('Error fetching service:', fetchError);
+      logger.error('Error fetching service:', fetchError);
       return NextResponse.json({ error: 'Failed to fetch service' }, { status: 500 });
     }
 
@@ -156,7 +157,7 @@ export async function DELETE(
       .limit(1);
 
     if (bookingsError) {
-      console.error('Error checking active bookings:', bookingsError);
+      logger.error('Error checking active bookings:', bookingsError);
       return NextResponse.json({ error: 'Failed to check active bookings' }, { status: 500 });
     }
 
@@ -178,7 +179,7 @@ export async function DELETE(
       .single();
 
     if (deleteError) {
-      console.error('Error deleting service:', deleteError);
+      logger.error('Error deleting service:', deleteError);
       return NextResponse.json({ error: 'Failed to delete service' }, { status: 500 });
     }
 
@@ -189,7 +190,7 @@ export async function DELETE(
     });
 
   } catch (error) {
-    console.error('API Error:', error);
+    logger.error('API Error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

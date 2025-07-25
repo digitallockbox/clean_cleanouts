@@ -6,7 +6,7 @@ import { Footer } from '@/components/layout/footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { useWebsiteSettings } from '@/contexts/website-settings';
+import { useWebsiteSettings } from '@/contexts/website-settings-extended';
 import { useServices } from '@/hooks/use-services';
 import { Truck, Clock, Shield, Star, CheckCircle, ArrowRight, Sparkles, Award, Users, Zap } from 'lucide-react';
 import Link from 'next/link';
@@ -18,11 +18,12 @@ export default function Services() {
     autoFetch: true 
   });
 
+  // Get features from settings
   const features = [
-    { icon: CheckCircle, text: 'Licensed & Insured' },
-    { icon: Clock, text: 'Same Day Service' },
-    { icon: Shield, text: 'Eco-Friendly Disposal' },
-    { icon: Star, text: '100% Satisfaction Guarantee' }
+    { icon: CheckCircle, text: settings.services_hero_feature_1 },
+    { icon: Clock, text: settings.services_hero_feature_2 },
+    { icon: Shield, text: settings.services_hero_feature_3 },
+    { icon: Star, text: settings.services_hero_feature_4 }
   ];
 
   if (loading) {
@@ -59,16 +60,15 @@ export default function Services() {
           <div className="text-center">
             <div className="inline-flex items-center px-6 py-3 bg-blue-100 text-blue-800 rounded-full text-sm font-medium mb-6">
               <Star className="w-4 h-4 mr-2" />
-              Professional Service Excellence
+              {settings.services_hero_badge}
             </div>
             
             <h1 className="text-5xl md:text-7xl font-black text-gray-900 mb-6 leading-tight">
-              Our <span className="text-gradient">Expert Services</span>
+              {settings.services_hero_title} <span className="text-gradient">{settings.services_hero_title_highlight}</span>
             </h1>
             
             <p className="text-xl md:text-2xl text-gray-600 max-w-4xl mx-auto mb-12 leading-relaxed">
-              Professional cleanout and removal services tailored to your specific needs.
-              From residential junk removal to commercial cleanouts, we deliver excellence every time.
+              {settings.services_hero_description}
             </p>
             
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-5xl mx-auto">
@@ -101,10 +101,10 @@ export default function Services() {
           <div className="text-center mb-16">
             <div className="inline-flex items-center px-4 py-2 bg-purple-100 text-purple-800 rounded-full text-sm font-medium mb-4">
               <Zap className="w-4 h-4 mr-2" />
-              Choose Your Service
+              {settings.services_grid_badge}
             </div>
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-              Premium <span className="text-gradient-warm">Service Options</span>
+              {settings.services_grid_title} <span className="text-gradient-warm">{settings.services_grid_title_highlight}</span>
             </h2>
           </div>
 
@@ -221,16 +221,16 @@ export default function Services() {
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="inline-flex items-center px-6 py-3 bg-white/20 backdrop-blur-sm rounded-full text-white font-medium mb-6 glass">
             <Users className="w-5 h-5 mr-2" />
-            Custom Solutions Available
+            {settings.services_custom_badge}
           </div>
           
           <h2 className="text-4xl md:text-6xl font-black text-white mb-6 leading-tight">
-            Need a <span className="text-yellow-300">Custom Solution?</span>
+            {settings.services_custom_title} <span className="text-yellow-300">{settings.services_custom_title_highlight}</span>
           </h2>
           
           <p className="text-xl md:text-2xl text-white/90 mb-12 max-w-3xl mx-auto leading-relaxed">
-            Don't see exactly what you need? Our expert team can create a custom solution tailored to your specific requirements.
-            <span className="block mt-2 text-yellow-300 font-semibold">Free consultation • Flexible pricing • Guaranteed satisfaction</span>
+            {settings.services_custom_description}
+            <span className="block mt-2 text-yellow-300 font-semibold">{settings.services_custom_guarantee}</span>
           </p>
           
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
@@ -241,7 +241,7 @@ export default function Services() {
             >
               <Link href="/contact">
                 <Award className="mr-2 h-5 w-5" />
-                Get Custom Quote
+                {settings.services_custom_primary_button}
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Link>
             </Button>
@@ -254,7 +254,7 @@ export default function Services() {
             >
               <Link href="/booking">
                 <Sparkles className="mr-2 h-5 w-5" />
-                Book Standard Service
+                {settings.services_custom_secondary_button}
               </Link>
             </Button>
           </div>

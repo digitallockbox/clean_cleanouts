@@ -51,7 +51,7 @@
 //       URL.revokeObjectURL(url);
 //       toast.success('Invoice downloaded successfully!');
 //     } catch (error) {
-//       console.error('Error downloading invoice:', error);
+//       logger.error('Error downloading invoice:', error);
 //       toast.error('Failed to download invoice');
 //     } finally {
 //       setIsGenerating(false);
@@ -76,7 +76,7 @@
 //       const { data: invoiceData } = await response.json();
 //       await previewInvoice(invoiceData);
 //     } catch (error) {
-//       console.error('Error previewing invoice:', error);
+//       logger.error('Error previewing invoice:', error);
 //       toast.error('Failed to preview invoice');
 //     } finally {
 //       setIsPreviewing(false);
@@ -188,7 +188,7 @@
 //         await previewInvoice(invoiceData);
 //       }
 //     } catch (error) {
-//       console.error(`Error ${action}ing invoice:`, error);
+//       logger.error(`Error ${action}ing invoice:`, error);
 //       toast.error(`Failed to ${action} invoice`);
 //     } finally {
 //       setIsLoading(false);
@@ -243,6 +243,7 @@ import { InvoicePreview } from '@/components/ui/invoice-preview';
 import { downloadInvoice, previewInvoice, exportInvoiceAsImage, InvoiceData } from '@/lib/pdf-generator';
 import { toast } from 'sonner';
 import { FileText, Download, Eye, MoreVertical, Image } from 'lucide-react';
+import { logger } from '@/lib/logger';
 
 interface InvoiceActionsProps {
   bookingId: string;
@@ -287,7 +288,7 @@ export const InvoiceActions: React.FC<InvoiceActionsProps> = ({
       await downloadInvoice(data);
       toast.success('Invoice PDF downloaded successfully!');
     } catch (error) {
-      console.error('Error downloading invoice:', error);
+      logger.error('Error downloading invoice:', error);
       toast.error('Failed to download invoice PDF');
     } finally {
       setIsGenerating(false);
@@ -301,7 +302,7 @@ export const InvoiceActions: React.FC<InvoiceActionsProps> = ({
       setInvoiceData(data);
       setShowPreview(true);
     } catch (error) {
-      console.error('Error previewing invoice:', error);
+      logger.error('Error previewing invoice:', error);
       toast.error('Failed to preview invoice');
     } finally {
       setIsPreviewing(false);
@@ -322,14 +323,14 @@ export const InvoiceActions: React.FC<InvoiceActionsProps> = ({
           await exportInvoiceAsImage('invoice-preview-modal', `invoice-${bookingId.slice(-8)}.png`);
           toast.success('Invoice image exported successfully!');
         } catch (error) {
-          console.error('Error exporting image:', error);
+          logger.error('Error exporting image:', error);
           toast.error('Failed to export invoice as image');
         } finally {
           setIsExportingImage(false);
         }
       }, 500);
     } catch (error) {
-      console.error('Error preparing image export:', error);
+      logger.error('Error preparing image export:', error);
       toast.error('Failed to prepare invoice for image export');
       setIsExportingImage(false);
     }
@@ -340,7 +341,7 @@ export const InvoiceActions: React.FC<InvoiceActionsProps> = ({
       const data = await fetchInvoiceData();
       await previewInvoice(data);
     } catch (error) {
-      console.error('Error opening PDF preview:', error);
+      logger.error('Error opening PDF preview:', error);
       toast.error('Failed to open PDF preview');
     }
   };
@@ -533,7 +534,7 @@ export const InvoiceButton: React.FC<{
         toast.info('Please use the preview option to export as image');
       }
     } catch (error) {
-      console.error(`Error ${action}ing invoice:`, error);
+      logger.error(`Error ${action}ing invoice:`, error);
       toast.error(`Failed to ${action} invoice`);
     } finally {
       setIsLoading(false);

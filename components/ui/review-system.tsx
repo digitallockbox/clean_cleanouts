@@ -15,6 +15,7 @@ import { useReviews, Review } from '@/hooks/use-reviews';
 import { formatDistanceToNow } from 'date-fns';
 import { Star, MessageSquare, User } from 'lucide-react';
 import { z } from 'zod';
+import { logger } from '@/lib/logger';
 
 // Review form schema
 const reviewFormSchema = z.object({
@@ -101,7 +102,7 @@ export const ReviewForm: React.FC<ReviewFormProps> = ({
       form.reset();
       onReviewSubmitted?.();
     } catch (error) {
-      console.error('Error submitting review:', error);
+      logger.error('Error submitting review:', error);
     } finally {
       setIsSubmitting(false);
     }

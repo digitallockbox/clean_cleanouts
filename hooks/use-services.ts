@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Service, ServiceFilters } from '@/lib/types';
 import { toast } from 'sonner';
+import { logger } from '@/lib/logger';
 
 interface UseServicesOptions {
   filters?: ServiceFilters;
@@ -69,7 +70,7 @@ export function useServices(options: UseServicesOptions = {}): UseServicesReturn
       setServices(data || []);
 
     } catch (err) {
-      console.error('Error fetching services:', err);
+      logger.error('Error fetching services:', err);
       setError('Failed to fetch services');
       toast.error('Failed to fetch services');
     } finally {
@@ -98,7 +99,7 @@ export function useServices(options: UseServicesOptions = {}): UseServicesReturn
       return result.data;
 
     } catch (err) {
-      console.error('Error creating service:', err);
+      logger.error('Error creating service:', err);
       toast.error(err instanceof Error ? err.message : 'Failed to create service');
       return null;
     }
@@ -125,7 +126,7 @@ export function useServices(options: UseServicesOptions = {}): UseServicesReturn
       return result.data;
 
     } catch (err) {
-      console.error('Error updating service:', err);
+      logger.error('Error updating service:', err);
       toast.error(err instanceof Error ? err.message : 'Failed to update service');
       return null;
     }
@@ -148,7 +149,7 @@ export function useServices(options: UseServicesOptions = {}): UseServicesReturn
       return true;
 
     } catch (err) {
-      console.error('Error deleting service:', err);
+      logger.error('Error deleting service:', err);
       toast.error(err instanceof Error ? err.message : 'Failed to delete service');
       return false;
     }
@@ -197,7 +198,7 @@ export function useService(id: string) {
       setService(data);
 
     } catch (err) {
-      console.error('Error fetching service:', err);
+      logger.error('Error fetching service:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch service');
     } finally {
       setLoading(false);
@@ -251,7 +252,7 @@ export function useServiceAvailability(serviceId: string, date?: Date, duration:
       setSummary(result.data.summary || null);
 
     } catch (err) {
-      console.error('Error checking availability:', err);
+      logger.error('Error checking availability:', err);
       setError(err instanceof Error ? err.message : 'Failed to check availability');
       setAvailability([]);
       setSummary(null);

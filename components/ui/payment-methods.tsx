@@ -14,6 +14,7 @@ import { ButtonLoading } from '@/components/ui/loading-spinner';
 import { usePaymentMethods, PaymentMethod } from '@/hooks/use-payment-methods';
 import { CreditCard, Trash2, Plus, Star, Building2 } from 'lucide-react';
 import { z } from 'zod';
+import { logger } from '@/lib/logger';
 
 // Form validation schema
 const paymentMethodSchema = z.object({
@@ -138,7 +139,7 @@ const AddPaymentMethodForm: React.FC<AddPaymentMethodFormProps> = ({ onSuccess }
       form.reset();
       onSuccess();
     } catch (error) {
-      console.error('Error adding payment method:', error);
+      logger.error('Error adding payment method:', error);
     } finally {
       setIsSubmitting(false);
     }
@@ -329,7 +330,7 @@ export const PaymentMethodsManager: React.FC = () => {
     try {
       await setDefaultPaymentMethod(id);
     } catch (error) {
-      console.error('Error setting default payment method:', error);
+      logger.error('Error setting default payment method:', error);
     } finally {
       setIsActionLoading(false);
     }
@@ -340,7 +341,7 @@ export const PaymentMethodsManager: React.FC = () => {
     try {
       await deletePaymentMethod(id);
     } catch (error) {
-      console.error('Error deleting payment method:', error);
+      logger.error('Error deleting payment method:', error);
     } finally {
       setIsActionLoading(false);
     }

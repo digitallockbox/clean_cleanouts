@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { contactSchema } from '@/lib/validations/booking';
+import { logger } from '@/lib/logger';
 
 // Create Supabase client for server-side operations
 const supabase = createClient(
@@ -40,7 +41,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (contactError) {
-      console.error('Error storing contact submission:', contactError);
+      logger.error('Error storing contact submission:', contactError);
       // Continue even if database storage fails
     }
 
@@ -48,7 +49,7 @@ export async function POST(request: NextRequest) {
     // TODO: Send auto-reply email to customer
     
     // For now, we'll just log the contact submission
-    console.log('Contact form submission:', {
+    logger.info('Contact form submission:', {
       name,
       email,
       subject,
@@ -63,7 +64,7 @@ export async function POST(request: NextRequest) {
     }, { status: 201 });
 
   } catch (error) {
-    console.error('Contact API Error:', error);
+    logger.error('Contact API Error:', error);
     return NextResponse.json({ 
       error: 'Failed to submit contact form. Please try again.' 
     }, { status: 500 });
@@ -97,7 +98,7 @@ export async function GET(request: NextRequest) {
     const { data: submissions, error, count } = await query;
 
     if (error) {
-      console.error('Error fetching contact submissions:', error);
+      logger.error('Error fetching contact submissions:', error);
       return NextResponse.json({ error: 'Failed to fetch contact submissions' }, { status: 500 });
     }
 
@@ -113,7 +114,7 @@ export async function GET(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Contact API Error:', error);
+    logger.error('Contact API Error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

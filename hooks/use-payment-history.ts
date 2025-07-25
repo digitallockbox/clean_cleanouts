@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from './use-auth';
 import { toast } from 'sonner';
+import { logger } from '@/lib/logger';
 
 interface Payment {
   id: string;
@@ -62,7 +63,7 @@ export function usePaymentHistory(options: UsePaymentHistoryOptions = {}): UsePa
 
   const fetchPaymentHistory = useCallback(async (forceRefresh = false) => {
     if (!user) {
-      console.log('No user found, skipping payment history fetch');
+      logger.info('No user found, skipping payment history fetch');
       return;
     }
 
@@ -72,7 +73,7 @@ export function usePaymentHistory(options: UsePaymentHistoryOptions = {}): UsePa
     
     // Check if we have valid cached data and don't need to force refresh
     if (!forceRefresh && cached && (now - cached.timestamp) < cacheTime) {
-      console.log('Using cached payment history data');
+      logger.info('Using cached payment history data');
       setPayments(cached.data);
       setIsStale(false);
       return;
@@ -80,11 +81,11 @@ export function usePaymentHistory(options: UsePaymentHistoryOptions = {}): UsePa
 
     // Check if we should skip fetching if we just fetched recently (prevent rapid refetches)
     if (!forceRefresh && (now - lastFetchRef.current) < 1000) {
-      console.log('Skipping payment history fetch - too recent');
+      logger.info('Skipping payment history fetch - too recent');
       return;
     }
 
-    console.log('Fetching payment history for user:', user.id);
+    logger.info('Fetching payment history for user:', user.id);
     setLoading(true);
     setError(null);
     lastFetchRef.current = now;
@@ -93,11 +94,11 @@ export function usePaymentHistory(options: UsePaymentHistoryOptions = {}): UsePa
       // First, verify we have a valid session
       const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       if (sessionError || !session) {
-        console.error('No valid session found:', sessionError);
+        logger.error('No valid session found:', sessionError);
         throw new Error('Authentication required');
       }
 
-      console.log('Valid session found, proceeding with payment history query');
+      logger.info('Valid session found, proceeding with payment history query');
 
       // Note: The payments table structure shows it has booking_id, not user_id
       // We need to join through bookings to get user's payments
@@ -121,11 +122,11 @@ export function usePaymentHistory(options: UsePaymentHistoryOptions = {}): UsePa
         .order('created_at', { ascending: false });
 
       if (fetchError) {
-        console.error('Supabase payment history query error:', fetchError);
+        logger.error('Supabase payment history query error:', fetchError);
         throw fetchError;
       }
 
-      console.log('Payment history query successful. Found payments:', data?.length || 0);
+      logger.info('Payment history query successful. Found payments:', data?.length || 0);
 
       const paymentsData = data || [];
 
@@ -139,7 +140,7 @@ export function usePaymentHistory(options: UsePaymentHistoryOptions = {}): UsePa
       setIsStale(false);
 
     } catch (err) {
-      console.error('Error fetching payment history:', err);
+      logger.error('Error fetching payment history:', err);
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch payment history';
       setError(errorMessage);
       toast.error(errorMessage);

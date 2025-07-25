@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { isAdmin } from '@/lib/auth';
+import { logger } from '@/lib/logger';
 
 // Create Supabase client for server-side operations
 const supabase = createClient(
@@ -84,13 +85,13 @@ export async function POST(request: NextRequest) {
         const { data, error } = await query.order('created_at', { ascending: false });
 
         if (error) {
-          console.error(`Error exporting ${tableName}:`, error);
+          logger.error(`Error exporting ${tableName}:`, error);
           continue;
         }
 
         exportData[tableName] = data || [];
       } catch (error) {
-        console.error(`Error processing table ${tableName}:`, error);
+        logger.error(`Error processing table ${tableName}:`, error);
         exportData[tableName] = [];
       }
     }
@@ -141,7 +142,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(response, { headers });
 
   } catch (error) {
-    console.error('Error in data export:', error);
+    logger.error('Error in data export:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

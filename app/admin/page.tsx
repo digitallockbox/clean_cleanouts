@@ -16,6 +16,7 @@ import { SettingsComponent } from '@/components/admin/dashboard/settings';
 import { Sidebar } from '@/components/admin/dashboard/sidebar';
 import { Header } from '@/components/admin/dashboard/header';
 import { CustomerManager } from '@/components/admin/customer-manager';
+import { logger } from '@/lib/logger';
 
 interface DashboardData {
   stats: {
@@ -108,7 +109,7 @@ export default function AdminDashboard() {
 
       setDashboardData(result.data);
     } catch (error) {
-      console.error('Error loading dashboard data:', error);
+      logger.error('Error loading dashboard data:', error);
       toast.error('Failed to load dashboard data');
     } finally {
       setLoading(false);
@@ -137,7 +138,7 @@ export default function AdminDashboard() {
       toast.success(`Booking ${status} successfully`);
       refreshDashboardData();
     } catch (error) {
-      console.error('Error updating booking:', error);
+      logger.error('Error updating booking:', error);
       toast.error('Failed to update booking');
     }
   };

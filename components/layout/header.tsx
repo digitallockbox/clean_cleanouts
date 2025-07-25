@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
-import { useLegacySettings, useWebsiteSettings } from '@/contexts/website-settings';
+import { useWebsiteSettings } from '@/contexts/website-settings-extended';
 import { signOut, isAdmin } from '@/lib/auth';
 import {
   DropdownMenu,
@@ -19,8 +19,7 @@ import { toast } from 'sonner';
 
 export const Header: React.FC = () => {
   const { user, loading } = useAuth();
-  const settings = useLegacySettings();
-  const { loading: settingsLoading } = useWebsiteSettings();
+  const { settings, loading: settingsLoading } = useWebsiteSettings();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -66,8 +65,8 @@ export const Header: React.FC = () => {
                 <div className="h-10 w-10 rounded-xl bg-gradient-to-r from-gray-200 to-gray-300 animate-pulse shadow-md" />
               ) : (
                 <img
-                  src={settings.logoUrl || 'https://images.pexels.com/photos/4099354/pexels-photo-4099354.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop'}
-                  alt={settings.siteName || 'Logo'}
+                  src={settings.brand_logo_url || 'https://images.pexels.com/photos/4099354/pexels-photo-4099354.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop'}
+                  alt={settings.brand_company_name || 'Logo'}
                   className="h-10 w-10 rounded-xl object-cover shadow-md group-hover:shadow-lg transition-all duration-300"
                 />
               )}
@@ -80,10 +79,10 @@ export const Header: React.FC = () => {
                 <div className="h-6 w-32 bg-gradient-to-r from-gray-200 to-gray-300 animate-pulse rounded" />
               ) : (
                 <span className="text-xl font-black text-gradient group-hover:scale-105 transition-transform duration-300">
-                  {settings.siteName || 'Loading...'}
+                  {settings.brand_company_name || 'Loading...'}
                 </span>
               )}
-              <span className="text-xs text-gray-500 font-medium -mt-1">Professional Service</span>
+             
             </div>
           </Link>
 

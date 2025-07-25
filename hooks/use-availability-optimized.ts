@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { toast } from 'sonner';
 import { registerCacheInvalidator, unregisterCacheInvalidator } from '@/lib/utils/availability-cache';
+import { logger } from '@/lib/logger';
 
 export interface TimeSlot {
   time: string;
@@ -216,7 +217,7 @@ export const useOptimizedAvailability = (options: UseOptimizedAvailabilityOption
       
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch availability';
       setError(errorMessage);
-      console.error('Error fetching availability:', err);
+      logger.error('Error fetching availability:', err);
     } finally {
       setLoading(false);
     }
@@ -316,7 +317,7 @@ export const useOptimizedAvailability = (options: UseOptimizedAvailabilityOption
     try {
       await checkBulkAvailability(dates, targetServiceId, targetDuration, false);
     } catch (error) {
-      console.error('Error preloading availability:', error);
+      logger.error('Error preloading availability:', error);
       // Don't show error to user for background preloading
     }
   }, [serviceId, preloadDays, checkBulkAvailability]);

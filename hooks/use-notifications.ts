@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
+import { logger } from '@/lib/logger';
 
 export interface Notification {
   id: string;
@@ -58,7 +59,7 @@ export const useNotifications = (options: UseNotificationsOptions = {}) => {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch notifications';
       setError(errorMessage);
-      console.error('Error fetching notifications:', err);
+      logger.error('Error fetching notifications:', err);
     } finally {
       setLoading(false);
     }
@@ -111,7 +112,7 @@ export const useNotifications = (options: UseNotificationsOptions = {}) => {
 
       toast.success('All notifications marked as read');
     } catch (err) {
-      console.error('Error marking all notifications as read:', err);
+      logger.error('Error marking all notifications as read:', err);
     }
   };
 

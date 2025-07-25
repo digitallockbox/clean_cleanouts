@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { logger } from '@/lib/logger';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
@@ -38,7 +39,7 @@ export async function PATCH(
       .single();
 
     if (error) {
-      console.error('Error updating notification:', error);
+      logger.error('Error updating notification:', error);
       return NextResponse.json({ error: 'Failed to update notification' }, { status: 500 });
     }
 
@@ -48,7 +49,7 @@ export async function PATCH(
 
     return NextResponse.json({ notification });
   } catch (error) {
-    console.error('Error in notification update API:', error);
+    logger.error('Error in notification update API:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -79,13 +80,13 @@ export async function DELETE(
       .eq('user_id', user.id); // Ensure user can only delete their own notifications
 
     if (error) {
-      console.error('Error deleting notification:', error);
+      logger.error('Error deleting notification:', error);
       return NextResponse.json({ error: 'Failed to delete notification' }, { status: 500 });
     }
 
     return NextResponse.json({ message: 'Notification deleted successfully' });
   } catch (error) {
-    console.error('Error in notification delete API:', error);
+    logger.error('Error in notification delete API:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

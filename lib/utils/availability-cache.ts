@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 /**
  * Global availability cache management utilities
  * This module provides functions to invalidate availability cache across the application
@@ -25,14 +26,14 @@ export function unregisterCacheInvalidator(invalidator: (date?: Date, serviceId?
  * This should be called after booking creation, update, or cancellation
  */
 export function invalidateAvailabilityCache(bookingDate?: Date, serviceId?: string) {
-  console.log('Invalidating availability cache for:', { bookingDate, serviceId });
+  logger.info('Invalidating availability cache for:', { bookingDate, serviceId });
   
   // Call all registered invalidators
   globalCacheInvalidators.forEach(invalidator => {
     try {
       invalidator(bookingDate, serviceId);
     } catch (error) {
-      console.error('Error in cache invalidator:', error);
+      logger.error('Error in cache invalidator:', error);
     }
   });
 }
@@ -41,13 +42,13 @@ export function invalidateAvailabilityCache(bookingDate?: Date, serviceId?: stri
  * Clear all availability cache
  */
 export function clearAllAvailabilityCache() {
-  console.log('Clearing all availability cache');
+  logger.info('Clearing all availability cache');
   
   globalCacheInvalidators.forEach(invalidator => {
     try {
       invalidator(); // Call without parameters to clear all
     } catch (error) {
-      console.error('Error in cache invalidator:', error);
+      logger.error('Error in cache invalidator:', error);
     }
   });
 }
@@ -60,7 +61,7 @@ export function invalidateAvailabilityCacheForDateRange(
   endDate: Date, 
   serviceId?: string
 ) {
-  console.log('Invalidating availability cache for date range:', { startDate, endDate, serviceId });
+  logger.info('Invalidating availability cache for date range:', { startDate, endDate, serviceId });
   
   // Generate all dates in the range
   const dates: Date[] = [];

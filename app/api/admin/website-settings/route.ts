@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { isAdmin } from '@/lib/auth';
+import { requireAdmin, logAdminAction } from '@/lib/auth-utils';
+import { logger } from '@/lib/logger';
 
 // Create Supabase client for server-side operations
 const supabase = createClient(
@@ -9,21 +10,17 @@ const supabase = createClient(
 );
 
 export async function GET(request: NextRequest) {
+  const startTime = Date.now();
+  
   try {
-    // For now, we'll skip auth check to test the basic functionality
-    // TODO: Re-enable auth check once we confirm the API works
-    
-    // Get current user
-    // const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
-    // if (authError || !user) {
-    //   return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    // }
+    // Check admin authentication
+    const authResult = await requireAdmin(request);
+    if (!authResult.success) {
+      return NextResponse.json({ error: authResult.error }, { status: authResult.status || 401 });
+    }
 
-    // Check if user is admin
-    // if (!isAdmin(user)) {
-    //   return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-    // }
+    const user = authResult.user!;
+    logger.info('Admin accessing website settings', { userId: user.id });
 
     // Get all website settings
     const { data: settings, error } = await supabase
@@ -32,7 +29,7 @@ export async function GET(request: NextRequest) {
       .order('key');
 
     if (error) {
-      console.error('Error fetching website settings:', error);
+      logger.error('Error fetching website settings', error);
       return NextResponse.json({ error: 'Failed to fetch settings' }, { status: 500 });
     }
 
@@ -46,40 +43,52 @@ export async function GET(request: NextRequest) {
       return acc;
     }, {} as Record<string, any>);
 
+    const duration = Date.now() - startTime;
+    logger.performance('website-settings-get', duration, { settingsCount: settings.length });
+
     return NextResponse.json({ 
       success: true, 
       data: settingsMap 
     });
 
   } catch (error) {
-    console.error('Error in website settings GET:', error);
+    logger.error('Error in website settings GET', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
 export async function PUT(request: NextRequest) {
+  const startTime = Date.now();
+  
   try {
-    // For now, we'll skip auth check to test the basic functionality
-    // TODO: Re-enable auth check once we confirm the API works
-    
-    // Get current user
-    // const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
-    // if (authError || !user) {
-    //   return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    // }
+    // Check admin authentication
+    const authResult = await requireAdmin(request);
+    if (!authResult.success) {
+      return NextResponse.json({ error: authResult.error }, { status: authResult.status || 401 });
+    }
 
-    // Check if user is admin
-    // if (!isAdmin(user)) {
-    //   return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-    // }
-
+    const user = authResult.user!;
     const body = await request.json();
     const { settings } = body;
 
     if (!settings || typeof settings !== 'object') {
       return NextResponse.json({ error: 'Invalid settings data' }, { status: 400 });
     }
+
+    logger.info('Admin updating website settings', { 
+      userId: user.id, 
+      settingsCount: Object.keys(settings).length 
+    });
+
+    // Get current settings for audit log
+    const { data: currentSettings } = await supabase
+      .from('website_settings')
+      .select('*');
+
+    const currentSettingsMap = currentSettings?.reduce((acc, setting) => {
+      acc[setting.key] = setting.value;
+      return acc;
+    }, {} as Record<string, string>) || {};
 
     // Update settings one by one
     const updatePromises = Object.entries(settings).map(async ([key, settingData]: [string, any]) => {
@@ -101,9 +110,22 @@ export async function PUT(request: NextRequest) {
     // Check for errors
     const errors = results.filter(result => result.error);
     if (errors.length > 0) {
-      console.error('Error updating website settings:', errors);
+      logger.error('Error updating website settings', errors);
       return NextResponse.json({ error: 'Failed to update some settings' }, { status: 500 });
     }
+
+    // Log admin action
+    await logAdminAction(
+      user,
+      'update_website_settings',
+      'website_settings',
+      'bulk_update',
+      currentSettingsMap,
+      settings
+    );
+
+    const duration = Date.now() - startTime;
+    logger.performance('website-settings-update', duration, { settingsCount: Object.keys(settings).length });
 
     return NextResponse.json({ 
       success: true, 
@@ -111,34 +133,34 @@ export async function PUT(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Error in website settings PUT:', error);
+    logger.error('Error in website settings PUT', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
 export async function POST(request: NextRequest) {
+  const startTime = Date.now();
+  
   try {
-    // For now, we'll skip auth check to test the basic functionality
-    // TODO: Re-enable auth check once we confirm the API works
-    
-    // Get current user
-    // const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
-    // if (authError || !user) {
-    //   return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    // }
+    // Check admin authentication
+    const authResult = await requireAdmin(request);
+    if (!authResult.success) {
+      return NextResponse.json({ error: authResult.error }, { status: authResult.status || 401 });
+    }
 
-    // Check if user is admin
-    // if (!isAdmin(user)) {
-    //   return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-    // }
-
+    const user = authResult.user!;
     const body = await request.json();
     const { key, value, type = 'text' } = body;
 
     if (!key || value === undefined) {
       return NextResponse.json({ error: 'Key and value are required' }, { status: 400 });
     }
+
+    logger.info('Admin creating website setting', { 
+      userId: user.id, 
+      key, 
+      type 
+    });
 
     // Insert new setting
     const { data, error } = await supabase
@@ -152,9 +174,22 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error) {
-      console.error('Error creating website setting:', error);
+      logger.error('Error creating website setting', error);
       return NextResponse.json({ error: 'Failed to create setting' }, { status: 500 });
     }
+
+    // Log admin action
+    await logAdminAction(
+      user,
+      'create_website_setting',
+      'website_settings',
+      key,
+      null,
+      { key, value, type }
+    );
+
+    const duration = Date.now() - startTime;
+    logger.performance('website-settings-create', duration, { key });
 
     return NextResponse.json({ 
       success: true, 
@@ -163,7 +198,7 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Error in website settings POST:', error);
+    logger.error('Error in website settings POST', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

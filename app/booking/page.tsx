@@ -25,6 +25,7 @@ import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
 import { format, addDays } from 'date-fns';
 import { Truck, Clock, Shield, CreditCard, User, Mail, Phone, MapPin, CheckCircle } from 'lucide-react';
+import { logger } from '@/lib/logger';
 
 export default function Booking() {
   const { user, loading: authLoading } = useAuth();
@@ -113,7 +114,7 @@ export default function Booking() {
 
           setDisabledDates(fullyBookedDates);
         } catch (error) {
-          console.error('Error checking bulk availability:', error);
+          logger.error('Error checking bulk availability:', error);
           // Don't show error to user, just don't disable any dates
           setDisabledDates(new Set());
         }
@@ -137,11 +138,11 @@ export default function Booking() {
       return;
     }
 
-    console.log('=== BOOKING FORM SUBMISSION ===');
-    console.log('Raw form data:', data);
-    console.log('Selected service:', selectedService);
-    console.log('Form validation state:', form.formState);
-    console.log('Form errors:', form.formState.errors);
+    logger.info('=== BOOKING FORM SUBMISSION ===');
+    logger.info('Raw form data:', data);
+    logger.info('Selected service:', selectedService);
+    logger.info('Form validation state:', form.formState);
+    logger.info('Form errors:', form.formState.errors);
 
     setIsSubmitting(true);
 
@@ -177,9 +178,9 @@ export default function Booking() {
       };
 
       // Log the data being sent for debugging
-      console.log('Formatted booking data:', formattedData);
-      console.log('Booking date type:', typeof formattedData.bookingDate);
-      console.log('Booking date value:', formattedData.bookingDate);
+      logger.info('Formatted booking data:', formattedData);
+      logger.info('Booking date type:', typeof formattedData.bookingDate);
+      logger.info('Booking date value:', formattedData.bookingDate);
 
       // Call API directly instead of using the hook
       const { data: { session } } = await supabase.auth.getSession();
@@ -194,38 +195,38 @@ export default function Booking() {
       });
 
       const result = await response.json();
-      console.log('=== API RESPONSE ===');
-      console.log('Response status:', response.status);
-      console.log('Response data:', result);
+      logger.info('=== API RESPONSE ===');
+      logger.info('Response status:', response.status);
+      logger.info('Response data:', result);
 
       if (!response.ok) {
-        console.error('Booking creation failed:', result);
+        logger.error('Booking creation failed:', result);
         throw new Error(result.error || 'Failed to create booking');
       }
 
       const booking = result.data;
-      console.log('=== BOOKING CREATED ===');
-      console.log('Booking:', booking);
-      console.log('Booking ID:', booking?.id);
+      logger.info('=== BOOKING CREATED ===');
+      logger.info('Booking:', booking);
+      logger.info('Booking ID:', booking?.id);
 
       if (booking && booking.id) {
         // Show success toast notification
         toast.success('Booking created successfully!');
         
         // Navigate immediately
-        console.log('Navigating to payment page...');
+        logger.info('Navigating to payment page...');
         const paymentUrl = `/payment?booking_id=${booking.id}`;
-        console.log('Payment URL:', paymentUrl);
+        logger.info('Payment URL:', paymentUrl);
         
         // Force navigation
         window.location.href = paymentUrl;
         
       } else {
-        console.error('No booking ID in response');
+        logger.error('No booking ID in response');
         toast.error('Failed to create booking. Please try again.');
       }
     } catch (error) {
-      console.error('Error in onSubmit:', error);
+      logger.error('Error in onSubmit:', error);
       toast.error('Failed to create booking. Please try again.');
     } finally {
       setIsSubmitting(false);

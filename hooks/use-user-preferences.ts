@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from './use-auth';
 import { toast } from 'sonner';
+import { logger } from '@/lib/logger';
 
 interface UserPreferences {
   id?: string;
@@ -55,7 +56,7 @@ export function useUserPreferences(options: UseUserPreferencesOptions = {}): Use
 
   const fetchUserPreferences = useCallback(async (forceRefresh = false) => {
     if (!user) {
-      console.log('No user found, skipping preferences fetch');
+      logger.info('No user found, skipping preferences fetch');
       return;
     }
 
@@ -65,7 +66,7 @@ export function useUserPreferences(options: UseUserPreferencesOptions = {}): Use
     
     // Check if we have valid cached data and don't need to force refresh
     if (!forceRefresh && cached && (now - cached.timestamp) < cacheTime) {
-      console.log('Using cached user preferences data');
+      logger.info('Using cached user preferences data');
       setPreferences(cached.data);
       setIsStale(false);
       return;
@@ -73,11 +74,11 @@ export function useUserPreferences(options: UseUserPreferencesOptions = {}): Use
 
     // Check if we should skip fetching if we just fetched recently (prevent rapid refetches)
     if (!forceRefresh && (now - lastFetchRef.current) < 1000) {
-      console.log('Skipping preferences fetch - too recent');
+      logger.info('Skipping preferences fetch - too recent');
       return;
     }
 
-    console.log('Fetching user preferences for user:', user.id);
+    logger.info('Fetching user preferences for user:', user.id);
     setLoading(true);
     setError(null);
     lastFetchRef.current = now;
@@ -86,11 +87,11 @@ export function useUserPreferences(options: UseUserPreferencesOptions = {}): Use
       // First, verify we have a valid session
       const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       if (sessionError || !session) {
-        console.error('No valid session found:', sessionError);
+        logger.error('No valid session found:', sessionError);
         throw new Error('Authentication required');
       }
 
-      console.log('Valid session found, proceeding with preferences query');
+      logger.info('Valid session found, proceeding with preferences query');
 
       const { data, error: fetchError } = await supabase
         .from('user_preferences')
@@ -100,7 +101,7 @@ export function useUserPreferences(options: UseUserPreferencesOptions = {}): Use
 
       if (fetchError && fetchError.code !== 'PGRST116') {
         // PGRST116 means no rows found, which is okay for preferences
-        console.error('Supabase user preferences query error:', fetchError);
+        logger.error('Supabase user preferences query error:', fetchError);
         throw fetchError;
       }
 
@@ -108,7 +109,7 @@ export function useUserPreferences(options: UseUserPreferencesOptions = {}): Use
 
       if (!data || fetchError?.code === 'PGRST116') {
         // No preferences found, create default preferences
-        console.log('No preferences found, creating default preferences');
+        logger.info('No preferences found, creating default preferences');
         preferencesData = {
           user_id: user.id,
           email_notifications: true,
@@ -128,20 +129,20 @@ export function useUserPreferences(options: UseUserPreferencesOptions = {}): Use
             .single();
 
           if (insertError) {
-            console.log('Could not create default preferences in database:', insertError);
+            logger.info('Could not create default preferences in database:', insertError);
             // Continue with default preferences data
           } else {
             preferencesData = insertedData;
           }
         } catch (insertErr) {
-          console.log('Preferences table may not exist yet:', insertErr);
+          logger.info('Preferences table may not exist yet:', insertErr);
           // Continue with default preferences data
         }
       } else {
         preferencesData = data;
       }
 
-      console.log('User preferences query successful');
+      logger.info('User preferences query successful');
 
       // Cache the results
       userPreferencesCache.set(cacheKey, {
@@ -153,7 +154,7 @@ export function useUserPreferences(options: UseUserPreferencesOptions = {}): Use
       setIsStale(false);
 
     } catch (err) {
-      console.error('Error fetching user preferences:', err);
+      logger.error('Error fetching user preferences:', err);
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch user preferences';
       setError(errorMessage);
       toast.error(errorMessage);
@@ -183,7 +184,7 @@ export function useUserPreferences(options: UseUserPreferencesOptions = {}): Use
         .single();
 
       if (updateError) {
-        console.error('Error updating preferences:', updateError);
+        logger.error('Error updating preferences:', updateError);
         throw updateError;
       }
 
@@ -200,7 +201,7 @@ export function useUserPreferences(options: UseUserPreferencesOptions = {}): Use
       return true;
 
     } catch (err) {
-      console.error('Error updating user preferences:', err);
+      logger.error('Error updating user preferences:', err);
       const errorMessage = err instanceof Error ? err.message : 'Failed to update preferences';
       setError(errorMessage);
       toast.error(errorMessage);

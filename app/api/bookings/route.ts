@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { bookingSchema } from '@/lib/validations/booking';
 import { BOOKING_STATUSES, PAYMENT_STATUSES } from '@/lib/constants';
+import { logger } from '@/lib/logger';
 
 // Helper function to create notifications
 async function createNotification(userId: string, title: string, message: string, type: 'info' | 'success' | 'warning' | 'error' = 'info') {
@@ -14,7 +15,7 @@ async function createNotification(userId: string, title: string, message: string
       read: false,
     });
   } catch (error) {
-    console.error('Error creating notification:', error);
+    logger.error('Error creating notification:', error);
   }
 }
 
@@ -105,7 +106,7 @@ export async function GET(request: NextRequest) {
     const { data: bookings, error, count } = await query;
 
     if (error) {
-      console.error('Error fetching bookings:', error);
+      logger.error('Error fetching bookings:', error);
       return NextResponse.json({ error: 'Failed to fetch bookings' }, { status: 500 });
     }
 
@@ -126,7 +127,7 @@ export async function GET(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('API Error:', error);
+    logger.error('API Error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -151,7 +152,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     
     // Log the incoming request for debugging
-    console.log('Incoming booking request:', JSON.stringify(body, null, 2));
+    logger.info('Incoming booking request:', JSON.stringify(body, null, 2));
     
     // Convert bookingDate string to Date object if needed
     const processedBody = {
@@ -163,9 +164,9 @@ export async function POST(request: NextRequest) {
     // Validate input
     const validationResult = bookingSchema.safeParse(processedBody);
     if (!validationResult.success) {
-      console.error('Booking validation failed:', validationResult.error.errors);
-      console.error('Processed body:', JSON.stringify(processedBody, null, 2));
-      console.error('Original body:', JSON.stringify(body, null, 2));
+      logger.error('Booking validation failed:', validationResult.error.errors);
+      logger.error('Processed body:', JSON.stringify(processedBody, null, 2));
+      logger.error('Original body:', JSON.stringify(body, null, 2));
       return NextResponse.json({
         error: 'Validation failed',
         details: validationResult.error.errors,
@@ -240,7 +241,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (bookingError) {
-      console.error('Error creating booking:', bookingError);
+      logger.error('Error creating booking:', bookingError);
       return NextResponse.json({ error: 'Failed to create booking' }, { status: 500 });
     }
 
@@ -259,7 +260,7 @@ export async function POST(request: NextRequest) {
     }, { status: 201 });
 
   } catch (error) {
-    console.error('API Error:', error);
+    logger.error('API Error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

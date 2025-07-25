@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { useWebsiteSettings } from '@/contexts/website-settings';
+import { useWebsiteSettings } from '@/contexts/website-settings-extended';
 import { Phone, Mail, MapPin, Facebook, Twitter, Instagram, Linkedin, Heart, Star, Shield, Clock } from 'lucide-react';
 
 export const Footer: React.FC = () => {
@@ -15,10 +15,28 @@ export const Footer: React.FC = () => {
     { icon: Linkedin, href: '#', label: 'LinkedIn' },
   ];
 
+  // Get services and links from settings
+  const services = [
+    settings.footer_service_1,
+    settings.footer_service_2,
+    settings.footer_service_3,
+    settings.footer_service_4,
+    settings.footer_service_5,
+    settings.footer_service_6,
+  ];
+
+  const quickLinks = [
+    { href: settings.footer_link_1_url, label: settings.footer_link_1_label },
+    { href: settings.footer_link_2_url, label: settings.footer_link_2_label },
+    { href: settings.footer_link_3_url, label: settings.footer_link_3_label },
+    { href: settings.footer_link_4_url, label: settings.footer_link_4_label },
+    { href: settings.footer_link_5_url, label: settings.footer_link_5_label },
+  ];
+
   const trustBadges = [
-    { icon: Shield, text: 'Licensed & Insured' },
-    { icon: Star, text: '5-Star Rated' },
-    { icon: Clock, text: '24/7 Support' },
+    { icon: Shield, text: settings.footer_trust_badge_1 },
+    { icon: Star, text: settings.footer_trust_badge_2 },
+    { icon: Clock, text: settings.footer_trust_badge_3 },
   ];
 
   return (
@@ -52,8 +70,7 @@ export const Footer: React.FC = () => {
             </div>
             
             <p className="text-gray-300 mb-6 leading-relaxed max-w-md">
-              {settings.brand_tagline}. We're committed to providing exceptional service with every project,
-              ensuring your complete satisfaction.
+              {settings.brand_tagline}{settings.footer_company_tagline_suffix}
             </p>
             
             <div className="space-y-4">
@@ -92,10 +109,10 @@ export const Footer: React.FC = () => {
           {/* Services */}
           <div>
             <h3 className="text-xl font-bold mb-6 text-gradient bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-              Our Services
+              {settings.footer_services_title}
             </h3>
             <ul className="space-y-3">
-              {['Junk Removal', 'Labor Moving', 'Estate Cleanouts', 'Construction Debris', 'Appliance Removal', 'Office Cleanouts'].map((service) => (
+              {services.map((service) => (
                 <li key={service}>
                   <Link
                     href="/services"
@@ -112,16 +129,10 @@ export const Footer: React.FC = () => {
           {/* Quick Links */}
           <div>
             <h3 className="text-xl font-bold mb-6 text-gradient bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-              Quick Links
+              {settings.footer_links_title}
             </h3>
             <ul className="space-y-3">
-              {[
-                { href: '/', label: 'Home' },
-                { href: '/services', label: 'All Services' },
-                { href: '/booking', label: 'Book Now' },
-                { href: '/contact', label: 'Contact Us' },
-                { href: '/auth/signin', label: 'Customer Portal' },
-              ].map((link) => (
+              {quickLinks.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
@@ -136,7 +147,7 @@ export const Footer: React.FC = () => {
 
             {/* Social Links */}
             <div className="mt-8">
-              <h4 className="text-lg font-semibold mb-4">Follow Us</h4>
+              <h4 className="text-lg font-semibold mb-4">{settings.footer_social_title}</h4>
               <div className="flex space-x-3">
                 {socialLinks.map((social) => (
                   <a
@@ -169,10 +180,10 @@ export const Footer: React.FC = () => {
           {/* Copyright */}
           <div className="text-center">
             <p className="text-gray-400 mb-2">
-              © 2024 {settings.brand_company_name}. All rights reserved.
+              {settings.footer_copyright_prefix} {settings.brand_company_name}{settings.footer_copyright_suffix}
             </p>
             <p className="text-sm text-gray-500 flex items-center justify-center">
-              Made with <Heart className="h-4 w-4 mx-1 text-red-500" /> for our amazing customers
+              {settings.footer_made_with_love.replace('❤️', '')} <Heart className="h-4 w-4 mx-1 text-red-500" /> {settings.footer_made_with_love.split('❤️')[1] || 'for our amazing customers'}
             </p>
           </div>
         </div>

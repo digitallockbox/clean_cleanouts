@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { logger } from '@/lib/logger';
 
 // Create Supabase client for server-side operations
 const supabaseAdmin = createClient(
@@ -65,7 +66,7 @@ export async function PUT(
       .single();
 
     if (updateError) {
-      console.error('Error updating payment method:', updateError);
+      logger.error('Error updating payment method:', updateError);
       return NextResponse.json({ error: 'Failed to update payment method' }, { status: 500 });
     }
 
@@ -82,7 +83,7 @@ export async function PUT(
     });
 
   } catch (error) {
-    console.error('API Error:', error);
+    logger.error('API Error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -132,7 +133,7 @@ export async function DELETE(
       .eq('user_id', user.id);
 
     if (deleteError) {
-      console.error('Error deleting payment method:', deleteError);
+      logger.error('Error deleting payment method:', deleteError);
       return NextResponse.json({ error: 'Failed to delete payment method' }, { status: 500 });
     }
 
@@ -160,7 +161,7 @@ export async function DELETE(
     });
 
   } catch (error) {
-    console.error('API Error:', error);
+    logger.error('API Error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

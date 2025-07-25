@@ -11,9 +11,10 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { ButtonLoading } from '@/components/ui/loading-spinner';
-import { useWebsiteSettings } from '@/contexts/website-settings';
+import { useWebsiteSettings } from '@/contexts/website-settings-extended';
 import { contactSchema } from '@/lib/validations/booking';
 import { toast } from 'sonner';
+import { logger } from '@/lib/logger';
 import {
   Phone,
   Mail,
@@ -69,7 +70,7 @@ export default function Contact() {
       form.reset();
 
     } catch (error) {
-      console.error('Error sending message:', error);
+      logger.error('Error sending message:', error);
       toast.error(error instanceof Error ? error.message : 'Failed to send message');
     } finally {
       setIsSubmitting(false);
@@ -106,8 +107,8 @@ export default function Contact() {
   const quickActions = [
     {
       icon: Calculator,
-      title: 'Get a Quote',
-      description: 'Request a custom quote for your project',
+      title: settings.contact_quick_action_1_title,
+      description: settings.contact_quick_action_1_description,
       action: () => {
         form.setValue('subject', 'Quote Request');
         document.getElementById('contact-form')?.scrollIntoView({ behavior: 'smooth' });
@@ -115,8 +116,8 @@ export default function Contact() {
     },
     {
       icon: MessageSquare,
-      title: 'Ask a Question',
-      description: 'Have questions about our services?',
+      title: settings.contact_quick_action_2_title,
+      description: settings.contact_quick_action_2_description,
       action: () => {
         form.setValue('subject', 'General Inquiry');
         document.getElementById('contact-form')?.scrollIntoView({ behavior: 'smooth' });
@@ -140,16 +141,15 @@ export default function Contact() {
           <div className="text-center mb-16">
             <div className="inline-flex items-center px-6 py-3 bg-blue-100 text-blue-800 rounded-full text-sm font-medium mb-6">
               <HeadphonesIcon className="w-4 h-4 mr-2" />
-              24/7 Customer Support
+              {settings.contact_hero_badge}
             </div>
             
             <h1 className="text-5xl md:text-7xl font-black text-gray-900 mb-6 leading-tight">
-              Get in <span className="text-gradient">Touch</span>
+              {settings.contact_hero_title} <span className="text-gradient">{settings.contact_hero_title_highlight}</span>
             </h1>
             
             <p className="text-xl md:text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
-              Ready to transform your space? Our expert team is here to help with quotes, questions,
-              and scheduling your perfect service solution.
+              {settings.contact_hero_description}
             </p>
           </div>
         </div>
@@ -161,9 +161,9 @@ export default function Contact() {
           <div className="lg:col-span-1 space-y-8">
             <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle className="text-2xl font-bold text-gradient">Get in Touch</CardTitle>
+                <CardTitle className="text-2xl font-bold text-gradient">{settings.contact_info_title}</CardTitle>
                 <CardDescription className="text-base">
-                  Reach out to us through any of these channels for immediate assistance
+                  {settings.contact_info_description}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -203,7 +203,7 @@ export default function Contact() {
             {/* Quick Actions */}
             <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle className="text-xl font-bold text-gradient">Quick Actions</CardTitle>
+                <CardTitle className="text-xl font-bold text-gradient">{settings.contact_quick_actions_title}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 {quickActions.map((action, index) => (
@@ -231,9 +231,9 @@ export default function Contact() {
           <div className="lg:col-span-2">
             <Card id="contact-form" className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle className="text-2xl font-bold text-gradient">Send us a Message</CardTitle>
+                <CardTitle className="text-2xl font-bold text-gradient">{settings.contact_form_title}</CardTitle>
                 <CardDescription className="text-base">
-                  Fill out the form below and we'll get back to you within 24 hours
+                  {settings.contact_form_description}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -242,16 +242,16 @@ export default function Contact() {
                     <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-r from-green-400 to-emerald-500 shadow-lg">
                       <CheckCircle className="h-10 w-10 text-white" />
                     </div>
-                    <h3 className="text-2xl font-bold text-gray-900 mb-4">Message Sent Successfully!</h3>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-4">{settings.contact_form_success_title}</h3>
                     <p className="text-gray-600 mb-6 text-lg leading-relaxed">
-                      Thank you for contacting us. Our team will get back to you within 24 hours with a personalized response.
+                      {settings.contact_form_success_description}
                     </p>
                     <Button
                       onClick={() => setIsSubmitted(false)}
                       className="btn-gradient shadow-lg"
                     >
                       <Sparkles className="mr-2 h-4 w-4" />
-                      Send Another Message
+                      {settings.contact_form_success_button}
                     </Button>
                   </div>
                 ) : (
@@ -387,14 +387,14 @@ export default function Contact() {
                 <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-r from-blue-500 to-purple-600 shadow-lg">
                   <Phone className="h-8 w-8 text-white" />
                 </div>
-                <h3 className="font-bold text-xl text-gray-900 mb-3">Call for Immediate Service</h3>
+                <h3 className="font-bold text-xl text-gray-900 mb-3">{settings.contact_card_1_title}</h3>
                 <p className="text-gray-600 mb-6 leading-relaxed">
-                  Need urgent service? Call us directly for same-day availability and emergency support.
+                  {settings.contact_card_1_description}
                 </p>
                 <Button className="btn-gradient shadow-lg group" asChild>
                   <a href={`tel:${settings.contact_phone}`}>
                     <Zap className="mr-2 h-4 w-4 group-hover:scale-110 transition-transform" />
-                    Call {settings.contact_phone}
+                    {settings.contact_card_1_button}
                   </a>
                 </Button>
               </div>
@@ -407,9 +407,9 @@ export default function Contact() {
                 <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-r from-purple-500 to-pink-500 shadow-lg">
                   <Calculator className="h-8 w-8 text-white" />
                 </div>
-                <h3 className="font-bold text-xl text-gray-900 mb-3">Free Estimates</h3>
+                <h3 className="font-bold text-xl text-gray-900 mb-3">{settings.contact_card_2_title}</h3>
                 <p className="text-gray-600 mb-6 leading-relaxed">
-                  Get a free, no-obligation estimate for your project with detailed pricing breakdown.
+                  {settings.contact_card_2_description}
                 </p>
                 <Button
                   className="btn-gradient shadow-lg group"
@@ -419,7 +419,7 @@ export default function Contact() {
                   }}
                 >
                   <Award className="mr-2 h-4 w-4 group-hover:scale-110 transition-transform" />
-                  Request Estimate
+                  {settings.contact_card_2_button}
                 </Button>
               </div>
             </CardContent>
@@ -431,14 +431,14 @@ export default function Contact() {
                 <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-r from-green-500 to-emerald-500 shadow-lg">
                   <MessageSquare className="h-8 w-8 text-white" />
                 </div>
-                <h3 className="font-bold text-xl text-gray-900 mb-3">24/7 Support</h3>
+                <h3 className="font-bold text-xl text-gray-900 mb-3">{settings.contact_card_3_title}</h3>
                 <p className="text-gray-600 mb-6 leading-relaxed">
-                  Questions? We're here to help around the clock with expert guidance and support.
+                  {settings.contact_card_3_description}
                 </p>
                 <Button className="btn-gradient shadow-lg group" asChild>
                   <a href={`mailto:${settings.contact_email}`}>
                     <Users className="mr-2 h-4 w-4 group-hover:scale-110 transition-transform" />
-                    Email Support
+                    {settings.contact_card_3_button}
                   </a>
                 </Button>
               </div>

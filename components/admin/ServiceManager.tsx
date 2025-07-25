@@ -16,6 +16,7 @@ import { LoadingSpinner, ButtonLoading } from '@/components/ui/loading-spinner';
 import { useServices } from '@/hooks/use-services';
 import { serviceSchema } from '@/lib/validations/booking';
 import { toast } from 'sonner';
+import { logger } from '@/lib/logger';
 import { 
   Plus, 
   Edit, 
@@ -76,7 +77,7 @@ export function ServiceManager({ className }: ServiceManagerProps) {
       setIsCreateDialogOpen(false);
       createForm.reset();
     } catch (error) {
-      console.error('Error creating service:', error);
+      logger.error('Error creating service:', error);
     } finally {
       setIsSubmitting(false);
     }
@@ -105,7 +106,7 @@ export function ServiceManager({ className }: ServiceManagerProps) {
       setIsEditDialogOpen(false);
       setSelectedService(null);
     } catch (error) {
-      console.error('Error updating service:', error);
+      logger.error('Error updating service:', error);
     } finally {
       setIsSubmitting(false);
     }
@@ -120,7 +121,7 @@ export function ServiceManager({ className }: ServiceManagerProps) {
       setIsDeleteDialogOpen(false);
       setSelectedService(null);
     } catch (error) {
-      console.error('Error deleting service:', error);
+      logger.error('Error deleting service:', error);
     } finally {
       setIsSubmitting(false);
     }
@@ -138,7 +139,7 @@ export function ServiceManager({ className }: ServiceManagerProps) {
         isActive: !service.is_active,
       });
     } catch (error) {
-      console.error('Error toggling service status:', error);
+      logger.error('Error toggling service status:', error);
     }
   };
 

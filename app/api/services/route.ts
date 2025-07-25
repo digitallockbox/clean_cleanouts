@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { serviceSchema } from '@/lib/validations/booking';
+import { logger } from '@/lib/logger';
 
 // Create Supabase client for server-side operations
 const supabase = createClient(
@@ -33,7 +34,7 @@ export async function GET(request: NextRequest) {
     const { data: services, error } = await query;
 
     if (error) {
-      console.error('Error fetching services:', error);
+      logger.error('Error fetching services:', error);
       return NextResponse.json({ error: 'Failed to fetch services' }, { status: 500 });
     }
 
@@ -43,7 +44,7 @@ export async function GET(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('API Error:', error);
+    logger.error('API Error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -80,7 +81,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (serviceError) {
-      console.error('Error creating service:', serviceError);
+      logger.error('Error creating service:', serviceError);
       return NextResponse.json({ error: 'Failed to create service' }, { status: 500 });
     }
 
@@ -91,7 +92,7 @@ export async function POST(request: NextRequest) {
     }, { status: 201 });
 
   } catch (error) {
-    console.error('API Error:', error);
+    logger.error('API Error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

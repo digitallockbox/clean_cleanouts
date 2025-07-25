@@ -10,8 +10,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
-import { useWebsiteSettings } from '@/contexts/website-settings';
+import { useWebsiteSettings } from '@/contexts/website-settings-extended';
 import { toast } from 'sonner';
+import { logger } from '@/lib/logger';
 import { 
   Settings, 
   Palette, 
@@ -59,7 +60,7 @@ export const SettingsComponent: React.FC = () => {
 
       setSettings(result.data);
     } catch (error) {
-      console.error('Error loading settings:', error);
+      logger.error('Error loading settings:', error);
       toast.error('Failed to load settings');
     } finally {
       setLoading(false);
@@ -101,7 +102,7 @@ export const SettingsComponent: React.FC = () => {
       // Refresh the website settings context to update the frontend
       await refreshSettings();
     } catch (error) {
-      console.error('Error saving settings:', error);
+      logger.error('Error saving settings:', error);
       toast.error('Failed to save settings');
     } finally {
       setSaving(false);
@@ -137,7 +138,7 @@ export const SettingsComponent: React.FC = () => {
 
       toast.success('Data exported successfully');
     } catch (error) {
-      console.error('Error exporting data:', error);
+      logger.error('Error exporting data:', error);
       toast.error('Failed to export data');
     }
   };
@@ -171,7 +172,7 @@ export const SettingsComponent: React.FC = () => {
 
       toast.success('Backup created successfully');
     } catch (error) {
-      console.error('Error creating backup:', error);
+      logger.error('Error creating backup:', error);
       toast.error('Failed to create backup');
     }
   };
@@ -216,30 +217,34 @@ export const SettingsComponent: React.FC = () => {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-6">
+        <TabsList className="grid w-full grid-cols-7">
           <TabsTrigger value="theme" className="flex items-center space-x-2">
             <Palette className="h-4 w-4" />
             <span>Theme</span>
           </TabsTrigger>
-          <TabsTrigger value="branding" className="flex items-center space-x-2">
-            <Image className="h-4 w-4" />
-            <span>Branding</span>
-          </TabsTrigger>
-          <TabsTrigger value="content" className="flex items-center space-x-2">
+          <TabsTrigger value="homepage" className="flex items-center space-x-2">
             <Layout className="h-4 w-4" />
-            <span>Content</span>
+            <span>Homepage</span>
+          </TabsTrigger>
+          <TabsTrigger value="services" className="flex items-center space-x-2">
+            <Settings className="h-4 w-4" />
+            <span>Services</span>
+          </TabsTrigger>
+          <TabsTrigger value="contact" className="flex items-center space-x-2">
+            <FileText className="h-4 w-4" />
+            <span>Contact</span>
           </TabsTrigger>
           <TabsTrigger value="footer" className="flex items-center space-x-2">
-            <FileText className="h-4 w-4" />
+            <Database className="h-4 w-4" />
             <span>Footer</span>
+          </TabsTrigger>
+          <TabsTrigger value="brand" className="flex items-center space-x-2">
+            <Image className="h-4 w-4" />
+            <span>Brand</span>
           </TabsTrigger>
           <TabsTrigger value="advanced" className="flex items-center space-x-2">
             <Code className="h-4 w-4" />
             <span>Advanced</span>
-          </TabsTrigger>
-          <TabsTrigger value="system" className="flex items-center space-x-2">
-            <Database className="h-4 w-4" />
-            <span>System</span>
           </TabsTrigger>
         </TabsList>
 
@@ -374,39 +379,442 @@ export const SettingsComponent: React.FC = () => {
           </Card>
         </TabsContent>
 
-        {/* Branding Settings */}
-        <TabsContent value="branding">
+        {/* Homepage Settings */}
+        <TabsContent value="homepage">
+          <div className="space-y-6">
+            {/* Hero Section */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Image className="mr-2 h-5 w-5" />
+                  Hero Trust Indicators
+                </CardTitle>
+                <CardDescription>
+                  Configure the trust indicators displayed in the hero section
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <Label htmlFor="hero-trust-1-number">Trust Indicator 1 - Number</Label>
+                    <Input
+                      id="hero-trust-1-number"
+                      value={settings.home_hero_trust_1_number?.value || ''}
+                      onChange={(e) => updateSetting('home_hero_trust_1_number', e.target.value)}
+                      placeholder="500+"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="hero-trust-1-label">Trust Indicator 1 - Label</Label>
+                    <Input
+                      id="hero-trust-1-label"
+                      value={settings.home_hero_trust_1_label?.value || ''}
+                      onChange={(e) => updateSetting('home_hero_trust_1_label', e.target.value)}
+                      placeholder="Happy Customers"
+                    />
+                  </div>
+                  <div className="flex items-end">
+                    <div className="p-3 bg-blue-50 rounded-lg text-sm text-blue-700">
+                      {settings.home_hero_trust_1_number?.value || '500+'} {settings.home_hero_trust_1_label?.value || 'Happy Customers'}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <Label htmlFor="hero-trust-2-number">Trust Indicator 2 - Number</Label>
+                    <Input
+                      id="hero-trust-2-number"
+                      value={settings.home_hero_trust_2_number?.value || ''}
+                      onChange={(e) => updateSetting('home_hero_trust_2_number', e.target.value)}
+                      placeholder="24/7"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="hero-trust-2-label">Trust Indicator 2 - Label</Label>
+                    <Input
+                      id="hero-trust-2-label"
+                      value={settings.home_hero_trust_2_label?.value || ''}
+                      onChange={(e) => updateSetting('home_hero_trust_2_label', e.target.value)}
+                      placeholder="Available Service"
+                    />
+                  </div>
+                  <div className="flex items-end">
+                    <div className="p-3 bg-blue-50 rounded-lg text-sm text-blue-700">
+                      {settings.home_hero_trust_2_number?.value || '24/7'} {settings.home_hero_trust_2_label?.value || 'Available Service'}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <Label htmlFor="hero-trust-3-number">Trust Indicator 3 - Number</Label>
+                    <Input
+                      id="hero-trust-3-number"
+                      value={settings.home_hero_trust_3_number?.value || ''}
+                      onChange={(e) => updateSetting('home_hero_trust_3_number', e.target.value)}
+                      placeholder="100%"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="hero-trust-3-label">Trust Indicator 3 - Label</Label>
+                    <Input
+                      id="hero-trust-3-label"
+                      value={settings.home_hero_trust_3_label?.value || ''}
+                      onChange={(e) => updateSetting('home_hero_trust_3_label', e.target.value)}
+                      placeholder="Satisfaction"
+                    />
+                  </div>
+                  <div className="flex items-end">
+                    <div className="p-3 bg-blue-50 rounded-lg text-sm text-blue-700">
+                      {settings.home_hero_trust_3_number?.value || '100%'} {settings.home_hero_trust_3_label?.value || 'Satisfaction'}
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Why Choose Us Section */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Why Choose Us Section</CardTitle>
+                <CardDescription>
+                  Configure the "Why Choose Us" section with features and benefits
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <Label htmlFor="why-choose-badge">Section Badge</Label>
+                    <Input
+                      id="why-choose-badge"
+                      value={settings.home_why_choose_badge?.value || ''}
+                      onChange={(e) => updateSetting('home_why_choose_badge', e.target.value)}
+                      placeholder="Why Choose Us"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="why-choose-title">Title (First Part)</Label>
+                    <Input
+                      id="why-choose-title"
+                      value={settings.home_why_choose_title?.value || ''}
+                      onChange={(e) => updateSetting('home_why_choose_title', e.target.value)}
+                      placeholder="Trusted by"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="why-choose-title-highlight">Title (Highlighted Part)</Label>
+                    <Input
+                      id="why-choose-title-highlight"
+                      value={settings.home_why_choose_title_highlight?.value || ''}
+                      onChange={(e) => updateSetting('home_why_choose_title_highlight', e.target.value)}
+                      placeholder="Thousands"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="why-choose-description">Section Description</Label>
+                  <Textarea
+                    id="why-choose-description"
+                    value={settings.home_why_choose_description?.value || ''}
+                    onChange={(e) => updateSetting('home_why_choose_description', e.target.value)}
+                    placeholder="We're committed to providing exceptional service with every job, backed by years of experience and countless satisfied customers"
+                    rows={3}
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="feature-1">Feature 1</Label>
+                    <Input
+                      id="feature-1"
+                      value={settings.home_why_choose_feature_1?.value || ''}
+                      onChange={(e) => updateSetting('home_why_choose_feature_1', e.target.value)}
+                      placeholder="Licensed & Insured"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="feature-2">Feature 2</Label>
+                    <Input
+                      id="feature-2"
+                      value={settings.home_why_choose_feature_2?.value || ''}
+                      onChange={(e) => updateSetting('home_why_choose_feature_2', e.target.value)}
+                      placeholder="Same Day Service"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="feature-3">Feature 3</Label>
+                    <Input
+                      id="feature-3"
+                      value={settings.home_why_choose_feature_3?.value || ''}
+                      onChange={(e) => updateSetting('home_why_choose_feature_3', e.target.value)}
+                      placeholder="Eco-Friendly Disposal"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="feature-4">Feature 4</Label>
+                    <Input
+                      id="feature-4"
+                      value={settings.home_why_choose_feature_4?.value || ''}
+                      onChange={(e) => updateSetting('home_why_choose_feature_4', e.target.value)}
+                      placeholder="Upfront Pricing"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="feature-5">Feature 5</Label>
+                    <Input
+                      id="feature-5"
+                      value={settings.home_why_choose_feature_5?.value || ''}
+                      onChange={(e) => updateSetting('home_why_choose_feature_5', e.target.value)}
+                      placeholder="Professional Team"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="feature-6">Feature 6</Label>
+                    <Input
+                      id="feature-6"
+                      value={settings.home_why_choose_feature_6?.value || ''}
+                      onChange={(e) => updateSetting('home_why_choose_feature_6', e.target.value)}
+                      placeholder="100% Satisfaction Guarantee"
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Statistics Section */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Statistics Section</CardTitle>
+                <CardDescription>
+                  Configure the statistics that build trust with customers
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="stat-1-number">Statistic 1 - Number</Label>
+                        <Input
+                          id="stat-1-number"
+                          value={settings.home_stat_1_number?.value || ''}
+                          onChange={(e) => updateSetting('home_stat_1_number', e.target.value)}
+                          placeholder="500+"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="stat-1-label">Statistic 1 - Label</Label>
+                        <Input
+                          id="stat-1-label"
+                          value={settings.home_stat_1_label?.value || ''}
+                          onChange={(e) => updateSetting('home_stat_1_label', e.target.value)}
+                          placeholder="Projects Completed"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="stat-2-number">Statistic 2 - Number</Label>
+                        <Input
+                          id="stat-2-number"
+                          value={settings.home_stat_2_number?.value || ''}
+                          onChange={(e) => updateSetting('home_stat_2_number', e.target.value)}
+                          placeholder="98%"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="stat-2-label">Statistic 2 - Label</Label>
+                        <Input
+                          id="stat-2-label"
+                          value={settings.home_stat_2_label?.value || ''}
+                          onChange={(e) => updateSetting('home_stat_2_label', e.target.value)}
+                          placeholder="Customer Satisfaction"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="stat-3-number">Statistic 3 - Number</Label>
+                        <Input
+                          id="stat-3-number"
+                          value={settings.home_stat_3_number?.value || ''}
+                          onChange={(e) => updateSetting('home_stat_3_number', e.target.value)}
+                          placeholder="24/7"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="stat-3-label">Statistic 3 - Label</Label>
+                        <Input
+                          id="stat-3-label"
+                          value={settings.home_stat_3_label?.value || ''}
+                          onChange={(e) => updateSetting('home_stat_3_label', e.target.value)}
+                          placeholder="Support Available"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="stat-4-number">Statistic 4 - Number</Label>
+                        <Input
+                          id="stat-4-number"
+                          value={settings.home_stat_4_number?.value || ''}
+                          onChange={(e) => updateSetting('home_stat_4_number', e.target.value)}
+                          placeholder="5★"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="stat-4-label">Statistic 4 - Label</Label>
+                        <Input
+                          id="stat-4-label"
+                          value={settings.home_stat_4_label?.value || ''}
+                          onChange={(e) => updateSetting('home_stat_4_label', e.target.value)}
+                          placeholder="Average Rating"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-4 bg-green-50 rounded-lg">
+                  <h4 className="font-medium text-green-900 mb-2">Statistics Preview</h4>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                    <div className="p-3 bg-white rounded-lg shadow-sm">
+                      <div className="text-2xl font-bold text-blue-600">{settings.home_stat_1_number?.value || '500+'}</div>
+                      <div className="text-sm text-gray-600">{settings.home_stat_1_label?.value || 'Projects Completed'}</div>
+                    </div>
+                    <div className="p-3 bg-white rounded-lg shadow-sm">
+                      <div className="text-2xl font-bold text-green-600">{settings.home_stat_2_number?.value || '98%'}</div>
+                      <div className="text-sm text-gray-600">{settings.home_stat_2_label?.value || 'Customer Satisfaction'}</div>
+                    </div>
+                    <div className="p-3 bg-white rounded-lg shadow-sm">
+                      <div className="text-2xl font-bold text-purple-600">{settings.home_stat_3_number?.value || '24/7'}</div>
+                      <div className="text-sm text-gray-600">{settings.home_stat_3_label?.value || 'Support Available'}</div>
+                    </div>
+                    <div className="p-3 bg-white rounded-lg shadow-sm">
+                      <div className="text-2xl font-bold text-orange-600">{settings.home_stat_4_number?.value || '5★'}</div>
+                      <div className="text-sm text-gray-600">{settings.home_stat_4_label?.value || 'Average Rating'}</div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* CTA Section */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Call-to-Action Section</CardTitle>
+                <CardDescription>
+                  Configure the final section that encourages visitors to take action
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="cta-badge">CTA Badge</Label>
+                    <Input
+                      id="cta-badge"
+                      value={settings.home_cta_badge?.value || ''}
+                      onChange={(e) => updateSetting('home_cta_badge', e.target.value)}
+                      placeholder="Join 500+ Satisfied Customers"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="cta-guarantee">Guarantee Text</Label>
+                    <Input
+                      id="cta-guarantee"
+                      value={settings.home_cta_guarantee?.value || ''}
+                      onChange={(e) => updateSetting('home_cta_guarantee', e.target.value)}
+                      placeholder="Free estimates • Same-day service • 100% satisfaction guaranteed"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="cta-primary-button">Primary Button Text</Label>
+                    <Input
+                      id="cta-primary-button"
+                      value={settings.home_cta_primary_button?.value || ''}
+                      onChange={(e) => updateSetting('home_cta_primary_button', e.target.value)}
+                      placeholder="Schedule Service Now"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="cta-secondary-button">Secondary Button Text</Label>
+                    <Input
+                      id="cta-secondary-button"
+                      value={settings.home_cta_secondary_button?.value || ''}
+                      onChange={(e) => updateSetting('home_cta_secondary_button', e.target.value)}
+                      placeholder="Call"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <Label htmlFor="cta-trust-1">Trust Badge 1</Label>
+                    <Input
+                      id="cta-trust-1"
+                      value={settings.home_cta_trust_1?.value || ''}
+                      onChange={(e) => updateSetting('home_cta_trust_1', e.target.value)}
+                      placeholder="Licensed & Insured"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="cta-trust-2">Trust Badge 2</Label>
+                    <Input
+                      id="cta-trust-2"
+                      value={settings.home_cta_trust_2?.value || ''}
+                      onChange={(e) => updateSetting('home_cta_trust_2', e.target.value)}
+                      placeholder="24/7 Available"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="cta-trust-3">Trust Badge 3</Label>
+                    <Input
+                      id="cta-trust-3"
+                      value={settings.home_cta_trust_3?.value || ''}
+                      onChange={(e) => updateSetting('home_cta_trust_3', e.target.value)}
+                      placeholder="5-Star Rated"
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        {/* Brand Settings */}
+        <TabsContent value="brand">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Image className="mr-2 h-5 w-5" />
-                Logo & Branding
+                <Layout className="mr-2 h-5 w-5" />
+                Header & Navigation
               </CardTitle>
               <CardDescription>
-                Upload your logo and configure brand identity
+                Configure your website header, logo, and navigation menu
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
                   <div>
-                    <Label htmlFor="company-name">Company Name</Label>
+                    <Label htmlFor="company-name">Company Name (Header)</Label>
                     <Input
                       id="company-name"
                       value={settings.brand_company_name?.value || ''}
                       onChange={(e) => updateSetting('brand_company_name', e.target.value)}
-                      placeholder="Your Company Name"
+                      placeholder="CleanOuts Pro"
                     />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="tagline">Tagline</Label>
-                    <Input
-                      id="tagline"
-                      value={settings.brand_tagline?.value || ''}
-                      onChange={(e) => updateSetting('brand_tagline', e.target.value)}
-                      placeholder="Your company tagline"
-                    />
+                    <p className="text-sm text-gray-500 mt-1">Appears in header next to logo</p>
                   </div>
 
                   <div>
@@ -417,16 +825,18 @@ export const SettingsComponent: React.FC = () => {
                       onChange={(e) => updateSetting('brand_logo_url', e.target.value, 'image')}
                       placeholder="https://example.com/logo.png"
                     />
+                    <p className="text-sm text-gray-500 mt-1">Logo displayed in header (recommended: 100x100px)</p>
                   </div>
 
                   <div>
-                    <Label htmlFor="favicon-url">Favicon URL</Label>
+                    <Label htmlFor="tagline">Company Tagline</Label>
                     <Input
-                      id="favicon-url"
-                      value={settings.brand_favicon_url?.value || ''}
-                      onChange={(e) => updateSetting('brand_favicon_url', e.target.value, 'image')}
-                      placeholder="https://example.com/favicon.ico"
+                      id="tagline"
+                      value={settings.brand_tagline?.value || ''}
+                      onChange={(e) => updateSetting('brand_tagline', e.target.value)}
+                      placeholder="Professional Service"
                     />
+                    <p className="text-sm text-gray-500 mt-1">Small text under company name in header</p>
                   </div>
                 </div>
 
@@ -438,135 +848,624 @@ export const SettingsComponent: React.FC = () => {
                         <img
                           src={settings.brand_logo_url.value}
                           alt="Logo Preview"
-                          className="max-h-20 object-contain"
+                          className="h-10 w-10 rounded-xl object-cover shadow-md"
                           onError={(e) => {
                             (e.target as HTMLImageElement).style.display = 'none';
                           }}
                         />
                       </div>
+                      <p className="text-sm text-gray-500 mt-1">This is how your logo appears in the header</p>
                     </div>
                   )}
+
+                  <div className="p-4 bg-blue-50 rounded-lg">
+                    <h4 className="font-medium text-blue-900 mb-2">Navigation Menu</h4>
+                    <p className="text-sm text-blue-700">
+                      Your navigation includes: Home, Services, Book Now, Contact
+                    </p>
+                    <p className="text-sm text-blue-600 mt-1">
+                      The "Book Now" button is highlighted with your primary color
+                    </p>
+                  </div>
                 </div>
               </div>
             </CardContent>
           </Card>
         </TabsContent>
 
-        {/* Content Settings */}
-        <TabsContent value="content">
+        {/* Hero Section Settings */}
+        <TabsContent value="hero">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Layout className="mr-2 h-5 w-5" />
-                Homepage Content
+                <Image className="mr-2 h-5 w-5" />
+                Hero Section
               </CardTitle>
               <CardDescription>
-                Configure your homepage hero section and featured content
+                Configure the main banner section at the top of your homepage
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="hero-title">Hero Title</Label>
+                  <Label htmlFor="hero-title">Main Headline</Label>
                   <Input
                     id="hero-title"
                     value={settings.hero_title?.value || ''}
                     onChange={(e) => updateSetting('hero_title', e.target.value)}
                     placeholder="Professional Cleanout Services"
                   />
+                  <p className="text-sm text-gray-500 mt-1">Large text displayed prominently in hero section</p>
                 </div>
 
                 <div>
-                  <Label htmlFor="hero-subtitle">Hero Subtitle</Label>
+                  <Label htmlFor="hero-subtitle">Subtitle</Label>
                   <Input
                     id="hero-subtitle"
                     value={settings.hero_subtitle?.value || ''}
                     onChange={(e) => updateSetting('hero_subtitle', e.target.value)}
                     placeholder="Fast, reliable, and eco-friendly services"
                   />
+                  <p className="text-sm text-gray-500 mt-1">Supporting text under the main headline</p>
                 </div>
 
                 <div>
-                  <Label htmlFor="hero-description">Hero Description</Label>
-                  <Textarea
-                    id="hero-description"
-                    value={settings.hero_description?.value || ''}
-                    onChange={(e) => updateSetting('hero_description', e.target.value)}
-                    placeholder="Detailed description of your services..."
-                    rows={3}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="hero-background">Hero Background Image URL</Label>
+                  <Label htmlFor="hero-background">Background Image URL</Label>
                   <Input
                     id="hero-background"
                     value={settings.hero_background_image?.value || ''}
                     onChange={(e) => updateSetting('hero_background_image', e.target.value, 'image')}
                     placeholder="https://example.com/hero-bg.jpg"
                   />
+                  <p className="text-sm text-gray-500 mt-1">Background image for hero section (recommended: 1200x600px)</p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="hero-cta">Primary CTA Text</Label>
+                    <Label htmlFor="hero-cta">Primary Button Text</Label>
                     <Input
                       id="hero-cta"
                       value={settings.hero_cta_text?.value || ''}
                       onChange={(e) => updateSetting('hero_cta_text', e.target.value)}
                       placeholder="Book Now"
                     />
+                    <p className="text-sm text-gray-500 mt-1">Main action button (links to booking)</p>
                   </div>
 
                   <div>
-                    <Label htmlFor="hero-secondary-cta">Secondary CTA Text</Label>
+                    <Label htmlFor="hero-secondary-cta">Secondary Button Text</Label>
                     <Input
                       id="hero-secondary-cta"
                       value={settings.hero_secondary_cta_text?.value || ''}
                       onChange={(e) => updateSetting('hero_secondary_cta_text', e.target.value)}
-                      placeholder="Learn More"
+                      placeholder="Get Free Quote"
+                    />
+                    <p className="text-sm text-gray-500 mt-1">Secondary button (links to contact)</p>
+                  </div>
+                </div>
+
+                <div className="p-4 bg-yellow-50 rounded-lg">
+                  <h4 className="font-medium text-yellow-900 mb-2">Trust Indicators</h4>
+                  <p className="text-sm text-yellow-700">
+                    Your hero section also displays: "500+ Happy Customers", "24/7 Available Service", "100% Satisfaction"
+                  </p>
+                  <p className="text-sm text-yellow-600 mt-1">
+                    These help build trust with potential customers
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Services Section Settings */}
+        {/* Contact Page Settings */}
+        <TabsContent value="contact">
+          <div className="space-y-6">
+            {/* Hero Section */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <FileText className="mr-2 h-5 w-5" />
+                  Contact Hero Section
+                </CardTitle>
+                <CardDescription>
+                  Configure the hero section at the top of the contact page
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <Label htmlFor="contact-hero-badge">Hero Badge</Label>
+                    <Input
+                      id="contact-hero-badge"
+                      value={settings.contact_hero_badge?.value || ''}
+                      onChange={(e) => updateSetting('contact_hero_badge', e.target.value)}
+                      placeholder="24/7 Customer Support"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="contact-hero-title">Hero Title</Label>
+                    <Input
+                      id="contact-hero-title"
+                      value={settings.contact_hero_title?.value || ''}
+                      onChange={(e) => updateSetting('contact_hero_title', e.target.value)}
+                      placeholder="Get in"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="contact-hero-title-highlight">Hero Title (Highlighted)</Label>
+                    <Input
+                      id="contact-hero-title-highlight"
+                      value={settings.contact_hero_title_highlight?.value || ''}
+                      onChange={(e) => updateSetting('contact_hero_title_highlight', e.target.value)}
+                      placeholder="Touch"
                     />
                   </div>
                 </div>
-              </div>
 
-              <div className="border-t pt-6">
-                <h3 className="text-lg font-medium mb-4">Section Toggles</h3>
+                <div>
+                  <Label htmlFor="contact-hero-description">Hero Description</Label>
+                  <Textarea
+                    id="contact-hero-description"
+                    value={settings.contact_hero_description?.value || ''}
+                    onChange={(e) => updateSetting('contact_hero_description', e.target.value)}
+                    placeholder="Ready to transform your space? Our expert team is here to help with quotes, questions, and scheduling your perfect service solution."
+                    rows={3}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Contact Info Section */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Contact Information Section</CardTitle>
+                <CardDescription>
+                  Configure the contact information display
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="contact-info-title">Section Title</Label>
+                    <Input
+                      id="contact-info-title"
+                      value={settings.contact_info_title?.value || ''}
+                      onChange={(e) => updateSetting('contact_info_title', e.target.value)}
+                      placeholder="Get in Touch"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="contact-info-description">Section Description</Label>
+                    <Input
+                      id="contact-info-description"
+                      value={settings.contact_info_description?.value || ''}
+                      onChange={(e) => updateSetting('contact_info_description', e.target.value)}
+                      placeholder="Reach out to us through any of these channels for immediate assistance"
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Quick Actions */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Quick Actions Section</CardTitle>
+                <CardDescription>
+                  Configure the quick action buttons in the contact sidebar
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div>
+                  <Label htmlFor="quick-actions-title">Section Title</Label>
+                  <Input
+                    id="quick-actions-title"
+                    value={settings.contact_quick_actions_title?.value || ''}
+                    onChange={(e) => updateSetting('contact_quick_actions_title', e.target.value)}
+                    placeholder="Quick Actions"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <h4 className="font-medium">Quick Action 1</h4>
+                    <div>
+                      <Label htmlFor="quick-action-1-title">Title</Label>
+                      <Input
+                        id="quick-action-1-title"
+                        value={settings.contact_quick_action_1_title?.value || ''}
+                        onChange={(e) => updateSetting('contact_quick_action_1_title', e.target.value)}
+                        placeholder="Get a Quote"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="quick-action-1-description">Description</Label>
+                      <Input
+                        id="quick-action-1-description"
+                        value={settings.contact_quick_action_1_description?.value || ''}
+                        onChange={(e) => updateSetting('contact_quick_action_1_description', e.target.value)}
+                        placeholder="Request a custom quote for your project"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <h4 className="font-medium">Quick Action 2</h4>
+                    <div>
+                      <Label htmlFor="quick-action-2-title">Title</Label>
+                      <Input
+                        id="quick-action-2-title"
+                        value={settings.contact_quick_action_2_title?.value || ''}
+                        onChange={(e) => updateSetting('contact_quick_action_2_title', e.target.value)}
+                        placeholder="Ask a Question"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="quick-action-2-description">Description</Label>
+                      <Input
+                        id="quick-action-2-description"
+                        value={settings.contact_quick_action_2_description?.value || ''}
+                        onChange={(e) => updateSetting('contact_quick_action_2_description', e.target.value)}
+                        placeholder="Have questions about our services?"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Contact Form */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Contact Form Section</CardTitle>
+                <CardDescription>
+                  Configure the main contact form
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="contact-form-title">Form Title</Label>
+                    <Input
+                      id="contact-form-title"
+                      value={settings.contact_form_title?.value || ''}
+                      onChange={(e) => updateSetting('contact_form_title', e.target.value)}
+                      placeholder="Send us a Message"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="contact-form-description">Form Description</Label>
+                    <Input
+                      id="contact-form-description"
+                      value={settings.contact_form_description?.value || ''}
+                      onChange={(e) => updateSetting('contact_form_description', e.target.value)}
+                      placeholder="Fill out the form below and we'll get back to you within 24 hours"
+                    />
+                  </div>
+                </div>
+
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between">
+                  <h4 className="font-medium">Success Message</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="featured-services-toggle">Featured Services Section</Label>
-                      <p className="text-sm text-gray-600">Show featured services on homepage</p>
+                      <Label htmlFor="form-success-title">Success Title</Label>
+                      <Input
+                        id="form-success-title"
+                        value={settings.contact_form_success_title?.value || ''}
+                        onChange={(e) => updateSetting('contact_form_success_title', e.target.value)}
+                        placeholder="Message Sent Successfully!"
+                      />
                     </div>
-                    <Switch
-                      id="featured-services-toggle"
-                      checked={settings.featured_services_enabled?.value === 'true'}
-                      onCheckedChange={(checked) => updateSetting('featured_services_enabled', checked.toString())}
+                    <div>
+                      <Label htmlFor="form-success-button">Success Button</Label>
+                      <Input
+                        id="form-success-button"
+                        value={settings.contact_form_success_button?.value || ''}
+                        onChange={(e) => updateSetting('contact_form_success_button', e.target.value)}
+                        placeholder="Send Another Message"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <Label htmlFor="form-success-description">Success Description</Label>
+                    <Textarea
+                      id="form-success-description"
+                      value={settings.contact_form_success_description?.value || ''}
+                      onChange={(e) => updateSetting('contact_form_success_description', e.target.value)}
+                      placeholder="Thank you for contacting us. Our team will get back to you within 24 hours with a personalized response."
+                      rows={3}
                     />
                   </div>
+                </div>
+              </CardContent>
+            </Card>
 
-                  <div className="flex items-center justify-between">
+            {/* Contact Cards */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Contact Information Cards</CardTitle>
+                <CardDescription>
+                  Configure the three contact cards at the bottom of the page
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="space-y-4">
+                    <h4 className="font-medium">Card 1</h4>
                     <div>
-                      <Label htmlFor="testimonials-toggle">Testimonials Section</Label>
-                      <p className="text-sm text-gray-600">Show customer testimonials</p>
+                      <Label htmlFor="contact-card-1-title">Title</Label>
+                      <Input
+                        id="contact-card-1-title"
+                        value={settings.contact_card_1_title?.value || ''}
+                        onChange={(e) => updateSetting('contact_card_1_title', e.target.value)}
+                        placeholder="Call for Immediate Service"
+                      />
                     </div>
-                    <Switch
-                      id="testimonials-toggle"
-                      checked={settings.testimonials_enabled?.value === 'true'}
-                      onCheckedChange={(checked) => updateSetting('testimonials_enabled', checked.toString())}
-                    />
+                    <div>
+                      <Label htmlFor="contact-card-1-description">Description</Label>
+                      <Textarea
+                        id="contact-card-1-description"
+                        value={settings.contact_card_1_description?.value || ''}
+                        onChange={(e) => updateSetting('contact_card_1_description', e.target.value)}
+                        placeholder="Need urgent service? Call us directly for same-day availability and emergency support."
+                        rows={3}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="contact-card-1-button">Button Text</Label>
+                      <Input
+                        id="contact-card-1-button"
+                        value={settings.contact_card_1_button?.value || ''}
+                        onChange={(e) => updateSetting('contact_card_1_button', e.target.value)}
+                        placeholder="Call"
+                      />
+                    </div>
                   </div>
 
-                  <div className="flex items-center justify-between">
+                  <div className="space-y-4">
+                    <h4 className="font-medium">Card 2</h4>
                     <div>
-                      <Label htmlFor="about-toggle">About Section</Label>
-                      <p className="text-sm text-gray-600">Show about us section</p>
+                      <Label htmlFor="contact-card-2-title">Title</Label>
+                      <Input
+                        id="contact-card-2-title"
+                        value={settings.contact_card_2_title?.value || ''}
+                        onChange={(e) => updateSetting('contact_card_2_title', e.target.value)}
+                        placeholder="Free Estimates"
+                      />
                     </div>
-                    <Switch
-                      id="about-toggle"
-                      checked={settings.about_enabled?.value === 'true'}
-                      onCheckedChange={(checked) => updateSetting('about_enabled', checked.toString())}
-                    />
+                    <div>
+                      <Label htmlFor="contact-card-2-description">Description</Label>
+                      <Textarea
+                        id="contact-card-2-description"
+                        value={settings.contact_card_2_description?.value || ''}
+                        onChange={(e) => updateSetting('contact_card_2_description', e.target.value)}
+                        placeholder="Get a free, no-obligation estimate for your project with detailed pricing breakdown."
+                        rows={3}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="contact-card-2-button">Button Text</Label>
+                      <Input
+                        id="contact-card-2-button"
+                        value={settings.contact_card_2_button?.value || ''}
+                        onChange={(e) => updateSetting('contact_card_2_button', e.target.value)}
+                        placeholder="Request Estimate"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <h4 className="font-medium">Card 3</h4>
+                    <div>
+                      <Label htmlFor="contact-card-3-title">Title</Label>
+                      <Input
+                        id="contact-card-3-title"
+                        value={settings.contact_card_3_title?.value || ''}
+                        onChange={(e) => updateSetting('contact_card_3_title', e.target.value)}
+                        placeholder="24/7 Support"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="contact-card-3-description">Description</Label>
+                      <Textarea
+                        id="contact-card-3-description"
+                        value={settings.contact_card_3_description?.value || ''}
+                        onChange={(e) => updateSetting('contact_card_3_description', e.target.value)}
+                        placeholder="Questions? We're here to help around the clock with expert guidance and support."
+                        rows={3}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="contact-card-3-button">Button Text</Label>
+                      <Input
+                        id="contact-card-3-button"
+                        value={settings.contact_card_3_button?.value || ''}
+                        onChange={(e) => updateSetting('contact_card_3_button', e.target.value)}
+                        placeholder="Email Support"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="services">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Settings className="mr-2 h-5 w-5" />
+                Services Section
+              </CardTitle>
+              <CardDescription>
+                Configure the services section that displays your three main services
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="services-title">Section Title (First Part)</Label>
+                  <Input
+                    id="services-title"
+                    value={settings.services_title?.value || ''}
+                    onChange={(e) => updateSetting('services_title', e.target.value)}
+                    placeholder="Our"
+                  />
+                  <p className="text-sm text-gray-500 mt-1">First part of the title (e.g., "Our")</p>
+                </div>
+
+                <div>
+                  <Label htmlFor="services-subtitle">Section Title (Highlighted Part)</Label>
+                  <Input
+                    id="services-subtitle"
+                    value={settings.services_subtitle?.value || ''}
+                    onChange={(e) => updateSetting('services_subtitle', e.target.value)}
+                    placeholder="Expert Services"
+                  />
+                  <p className="text-sm text-gray-500 mt-1">Second part with gradient color (e.g., "Expert Services")</p>
+                </div>
+
+                <div>
+                  <Label htmlFor="services-description">Section Description</Label>
+                  <Textarea
+                    id="services-description"
+                    value={settings.services_description?.value || ''}
+                    onChange={(e) => updateSetting('services_description', e.target.value)}
+                    placeholder="Professional cleanout and moving services tailored to your needs with unmatched quality and reliability"
+                    rows={3}
+                  />
+                  <p className="text-sm text-gray-500 mt-1">Description text under the title</p>
+                </div>
+
+                <div className="p-4 bg-green-50 rounded-lg">
+                  <h4 className="font-medium text-green-900 mb-2">Current Services Displayed</h4>
+                  <div className="space-y-2 text-sm text-green-700">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      <span><strong>Junk Removal</strong> - Starting at $99</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      <span><strong>Labor Moving</strong> - Starting at $120/hr</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      <span><strong>Estate Cleanouts</strong> - Starting at $150</span>
+                    </div>
+                  </div>
+                  <p className="text-sm text-green-600 mt-2">
+                    These services are managed in the Services section of the admin panel
+                  </p>
+                </div>
+
+                <div className="p-4 bg-blue-50 rounded-lg">
+                  <h4 className="font-medium text-blue-900 mb-2">Features Section</h4>
+                  <p className="text-sm text-blue-700 mb-2">
+                    Below services, your website shows "Why Choose Us" with these features:
+                  </p>
+                  <div className="grid grid-cols-2 gap-2 text-sm text-blue-600">
+                    <div>• Licensed & Insured</div>
+                    <div>• Same Day Service</div>
+                    <div>• Eco-Friendly Disposal</div>
+                    <div>• Upfront Pricing</div>
+                    <div>• Professional Team</div>
+                    <div>• 100% Satisfaction Guarantee</div>
+                  </div>
+                </div>
+
+                <div className="p-4 bg-purple-50 rounded-lg">
+                  <h4 className="font-medium text-purple-900 mb-2">Statistics Section</h4>
+                  <p className="text-sm text-purple-700 mb-2">
+                    Your website also displays these trust indicators:
+                  </p>
+                  <div className="grid grid-cols-2 gap-2 text-sm text-purple-600">
+                    <div>• 500+ Projects Completed</div>
+                    <div>• 98% Customer Satisfaction</div>
+                    <div>• 24/7 Support Available</div>
+                    <div>• 5★ Average Rating</div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* CTA Section Settings */}
+        <TabsContent value="cta">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <FileText className="mr-2 h-5 w-5" />
+                Call-to-Action Section
+              </CardTitle>
+              <CardDescription>
+                Configure the final section that encourages visitors to take action
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="cta-title">Main Title</Label>
+                  <Input
+                    id="cta-title"
+                    value={settings.cta_title?.value || ''}
+                    onChange={(e) => updateSetting('cta_title', e.target.value)}
+                    placeholder="Ready to Get Started?"
+                  />
+                  <p className="text-sm text-gray-500 mt-1">Large title text (last word will be highlighted in yellow)</p>
+                </div>
+
+                <div>
+                  <Label htmlFor="cta-description">Description</Label>
+                  <Textarea
+                    id="cta-description"
+                    value={settings.cta_description?.value || ''}
+                    onChange={(e) => updateSetting('cta_description', e.target.value)}
+                    placeholder="Book your service today and experience the difference professional cleanout services can make."
+                    rows={3}
+                  />
+                  <p className="text-sm text-gray-500 mt-1">Supporting text under the title</p>
+                </div>
+
+                <div className="p-4 bg-yellow-50 rounded-lg">
+                  <h4 className="font-medium text-yellow-900 mb-2">CTA Buttons</h4>
+                  <div className="space-y-2 text-sm text-yellow-700">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-3 h-3 bg-white rounded border"></div>
+                      <span><strong>Schedule Service Now</strong> - White button (links to booking)</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-3 h-3 border border-white rounded"></div>
+                      <span><strong>Call {settings.contact_phone?.value || '(555) 123-4567'}</strong> - Outline button (calls phone)</span>
+                    </div>
+                  </div>
+                  <p className="text-sm text-yellow-600 mt-2">
+                    Phone number is taken from your contact settings
+                  </p>
+                </div>
+
+                <div className="p-4 bg-gray-50 rounded-lg">
+                  <h4 className="font-medium text-gray-900 mb-2">Trust Badges</h4>
+                  <p className="text-sm text-gray-700 mb-2">
+                    At the bottom of this section, these trust indicators are displayed:
+                  </p>
+                  <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+                    <div>🛡️ Licensed & Insured</div>
+                    <div>🕐 24/7 Available</div>
+                    <div>⭐ 5-Star Rated</div>
+                  </div>
+                </div>
+
+                <div className="p-4 bg-blue-50 rounded-lg">
+                  <h4 className="font-medium text-blue-900 mb-2">Section Features</h4>
+                  <div className="space-y-1 text-sm text-blue-700">
+                    <div>• Animated gradient background</div>
+                    <div>• Floating animation elements</div>
+                    <div>• "Join 500+ Satisfied Customers" badge</div>
+                    <div>• "Free estimates • Same-day service • 100% satisfaction guaranteed" guarantee text</div>
                   </div>
                 </div>
               </div>

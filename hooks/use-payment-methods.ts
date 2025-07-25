@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { toast } from 'sonner';
 import { supabase } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 
 export interface PaymentMethod {
   id: string;
@@ -68,7 +69,7 @@ export const usePaymentMethods = (options: UsePaymentMethodsOptions = {}) => {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch payment methods';
       setError(errorMessage);
-      console.error('Error fetching payment methods:', err);
+      logger.error('Error fetching payment methods:', err);
     } finally {
       setLoading(false);
     }
@@ -215,7 +216,7 @@ export const usePaymentMethods = (options: UsePaymentMethodsOptions = {}) => {
         return newMethods;
       });
     } catch (err) {
-      console.error('Error setting default payment method:', err);
+      logger.error('Error setting default payment method:', err);
       throw err;
     }
   };

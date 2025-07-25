@@ -14,9 +14,10 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { LoadingSpinner, ButtonLoading } from '@/components/ui/loading-spinner';
-import { PaymentMethodsManager } from '@/components/ui/payment-methods';
+import { SecurePaymentMethodsManager } from '@/components/ui/secure-payment-methods';
 import { PreferenceManager } from '@/components/ui/preference-manager';
 import { PaymentHistory } from '@/components/ui/payment-history';
+import { logger } from '@/lib/logger';
 
 import { useAuth } from '@/hooks/use-auth';
 import { useBookings } from '@/hooks/use-bookings';
@@ -102,15 +103,15 @@ export default function Profile() {
             .insert(profileData);
           
           if (insertError) {
-            console.log('Could not create profile in database:', insertError);
+            logger.info('Could not create profile in database:', insertError);
             // Continue with default profile data
           }
         } catch (insertErr) {
-          console.log('Profile table may not exist yet:', insertErr);
+          logger.info('Profile table may not exist yet:', insertErr);
           // Continue with default profile data
         }
       } else if (error) {
-        console.log('Profile loading error (non-critical):', error);
+        logger.info('Profile loading error (non-critical):', error);
         // Use default profile data
         profileData = {
           id: user.id,
@@ -131,7 +132,7 @@ export default function Profile() {
       });
 
     } catch (error) {
-      console.log('Profile loading error (using fallback):', error);
+      logger.info('Profile loading error (using fallback):', error);
       // Use fallback profile data from user
       const fallbackProfile = {
         id: user.id,
@@ -170,11 +171,11 @@ export default function Profile() {
           });
 
         if (profileError) {
-          console.log('Profile table update error:', profileError);
+          logger.info('Profile table update error:', profileError);
           // Continue to update auth metadata
         }
       } catch (profileErr) {
-        console.log('Profile table may not exist, updating auth metadata only:', profileErr);
+        logger.info('Profile table may not exist, updating auth metadata only:', profileErr);
       }
 
       // Update auth user metadata (this is the primary source)
@@ -194,7 +195,7 @@ export default function Profile() {
       await loadProfile();
 
     } catch (error) {
-      console.error('Error updating profile:', error);
+      logger.error('Error updating profile:', error);
       toast.error('Failed to update profile');
     } finally {
       setIsUpdating(false);
@@ -408,8 +409,9 @@ export default function Profile() {
           {/* Booking History and Details */}
           <div className="lg:col-span-2">
             <Tabs defaultValue="bookings" className="space-y-6">
-              <TabsList className="grid w-full grid-cols-3">
+              <TabsList className="grid w-full grid-cols-4">
                 <TabsTrigger value="bookings">Booking History</TabsTrigger>
+                <TabsTrigger value="payment-methods">Payment Methods</TabsTrigger>
                 <TabsTrigger value="payments">Payment History</TabsTrigger>
                 <TabsTrigger value="preferences">Preferences</TabsTrigger>
               </TabsList>
@@ -527,6 +529,10 @@ export default function Profile() {
                     )}
                   </CardContent>
                 </Card>
+              </TabsContent>
+
+              <TabsContent value="payment-methods">
+                <SecurePaymentMethodsManager />
               </TabsContent>
 
               <TabsContent value="payments">

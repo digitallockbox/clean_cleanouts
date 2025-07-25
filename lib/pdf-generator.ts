@@ -1,6 +1,7 @@
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import html2canvas from 'html2canvas';
+import { logger } from '@/lib/logger';
 
 // Extend jsPDF type to include autoTable
 declare module 'jspdf' {
@@ -319,7 +320,7 @@ export const downloadInvoice = async (data: InvoiceData): Promise<void> => {
     
     URL.revokeObjectURL(url);
   } catch (error) {
-    console.error('Error downloading invoice:', error);
+    logger.error('Error downloading invoice:', error);
     throw new Error('Failed to download invoice');
   }
 };
@@ -337,7 +338,7 @@ export const previewInvoice = async (data: InvoiceData): Promise<void> => {
       URL.revokeObjectURL(url);
     }, 1000);
   } catch (error) {
-    console.error('Error previewing invoice:', error);
+    logger.error('Error previewing invoice:', error);
     throw new Error('Failed to preview invoice');
   }
 };
@@ -372,7 +373,7 @@ export const exportInvoiceAsImage = async (elementId: string, filename?: string)
       URL.revokeObjectURL(url);
     }, 'image/png');
   } catch (error) {
-    console.error('Error exporting invoice as image:', error);
+    logger.error('Error exporting invoice as image:', error);
     throw new Error('Failed to export invoice as image');
   }
 };

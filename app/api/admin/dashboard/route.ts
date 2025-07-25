@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { requireAdmin } from '@/lib/auth-utils';
+import { logger } from '@/lib/logger';
+
+// Force dynamic rendering for this route
+export const dynamic = 'force-dynamic';
 
 // Create Supabase client for server-side operations
 const supabase = createClient(
@@ -9,9 +14,23 @@ const supabase = createClient(
 
 // GET /api/admin/dashboard - Get dashboard analytics
 export async function GET(request: NextRequest) {
+  const startTime = Date.now();
+  
   try {
+    // Check admin authentication
+    const authResult = await requireAdmin(request);
+    if (!authResult.success) {
+      return NextResponse.json({ error: authResult.error }, { status: authResult.status || 401 });
+    }
+
+    const user = authResult.user!;
     const { searchParams } = new URL(request.url);
     const period = searchParams.get('period') || '30'; // days
+
+    logger.info('Admin accessing dashboard', { 
+      userId: user.id, 
+      period: parseInt(period) 
+    });
 
     // Calculate date range
     const endDate = new Date();
@@ -189,8 +208,15 @@ export async function GET(request: NextRequest) {
       },
     });
 
+    const duration = Date.now() - startTime;
+    logger.performance('admin-dashboard', duration, { 
+      period: parseInt(period),
+      totalBookings: stats.totalBookings,
+      totalRevenue: stats.totalRevenue 
+    });
+
   } catch (error) {
-    console.error('Dashboard API Error:', error);
+    logger.error('Dashboard API Error', error);
     return NextResponse.json({ 
       error: 'Failed to fetch dashboard data' 
     }, { status: 500 });

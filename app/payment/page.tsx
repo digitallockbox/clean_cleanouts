@@ -18,6 +18,7 @@ import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { CreditCard, Lock, CheckCircle, MapPin, User, Mail, Phone } from 'lucide-react';
+import { logger } from '@/lib/logger';
 
 // Initialize Stripe
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
@@ -68,7 +69,7 @@ function PaymentForm({ booking }: { booking: any }) {
 
         setClientSecret(result.clientSecret);
       } catch (error) {
-        console.error('Error creating payment intent:', error);
+        logger.error('Error creating payment intent:', error);
         toast.error('Failed to initialize payment');
       }
     };
@@ -104,7 +105,7 @@ function PaymentForm({ booking }: { booking: any }) {
       });
 
       if (error) {
-        console.error('Payment failed:', error);
+        logger.error('Payment failed:', error);
         toast.error(error.message || 'Payment failed');
       } else if (paymentIntent.status === 'succeeded') {
         toast.success('Payment completed successfully!');
@@ -127,15 +128,15 @@ function PaymentForm({ booking }: { booking: any }) {
 
           if (!updateResponse.ok) {
             const errorResult = await updateResponse.json();
-            console.error('Failed to update booking status after payment:', errorResult);
+            logger.error('Failed to update booking status after payment:', errorResult);
             throw new Error(errorResult.error || 'Failed to update booking status');
           }
 
           const result = await updateResponse.json();
-          console.log('Booking status updated successfully:', result);
+          logger.info('Booking status updated successfully:', result);
           
         } catch (updateError) {
-          console.error('Error updating booking status:', updateError);
+          logger.error('Error updating booking status:', updateError);
           // Don't fail the redirect if update fails - webhook will handle it
         }
         
@@ -145,7 +146,7 @@ function PaymentForm({ booking }: { booking: any }) {
         }, 2000);
       }
     } catch (error) {
-      console.error('Payment error:', error);
+      logger.error('Payment error:', error);
       toast.error('Payment failed');
     } finally {
       setIsProcessing(false);
@@ -230,50 +231,50 @@ export default function Payment() {
   // Debug logging and error checking
   useEffect(() => {
     if (booking) {
-      console.log('=== PAYMENT PAGE BOOKING DATA ===');
-      console.log('Full booking object:', booking);
-      console.log('Service data (singular):', booking.service);
-      console.log('Services data (plural):', (booking as any).services);
-      console.log('Service ID:', booking.service_id);
-      console.log('Customer info:', booking.customer_info);
-      console.log('Total price:', booking.total_price);
-      console.log('Duration:', booking.duration);
-      console.log('Status:', booking.status);
-      console.log('Payment status:', booking.payment_status);
+      logger.info('=== PAYMENT PAGE BOOKING DATA ===');
+      logger.info('Full booking object:', booking);
+      logger.info('Service data (singular):', booking.service);
+      logger.info('Services data (plural):', (booking as any).services);
+      logger.info('Service ID:', booking.service_id);
+      logger.info('Customer info:', booking.customer_info);
+      logger.info('Total price:', booking.total_price);
+      logger.info('Duration:', booking.duration);
+      logger.info('Status:', booking.status);
+      logger.info('Payment status:', booking.payment_status);
       
       // Enhanced service data debugging
-      console.log('=== SERVICE DATA ANALYSIS ===');
+      logger.info('=== SERVICE DATA ANALYSIS ===');
       if (booking.service) {
-        console.log('booking.service exists:', booking.service);
-        console.log('booking.service.base_price:', booking.service.base_price);
-        console.log('booking.service.price_per_hour:', booking.service.price_per_hour);
+        logger.info('booking.service exists:', booking.service);
+        logger.info('booking.service.base_price:', booking.service.base_price);
+        logger.info('booking.service.price_per_hour:', booking.service.price_per_hour);
       }
       if ((booking as any).services) {
-        console.log('booking.services exists:', (booking as any).services);
-        console.log('booking.services.base_price:', (booking as any).services.base_price);
-        console.log('booking.services.price_per_hour:', (booking as any).services.price_per_hour);
+        logger.info('booking.services exists:', (booking as any).services);
+        logger.info('booking.services.base_price:', (booking as any).services.base_price);
+        logger.info('booking.services.price_per_hour:', (booking as any).services.price_per_hour);
       }
       
       // Check for missing data
       const serviceData = booking.service || (booking as any).services;
       if (!serviceData) {
-        console.error('ERROR: No service data found in booking');
-        console.error('Available keys:', Object.keys(booking));
+        logger.error('ERROR: No service data found in booking');
+        logger.error('Available keys:', Object.keys(booking));
       } else {
-        console.log('Service data found:', serviceData);
-        console.log('Service data keys:', Object.keys(serviceData));
+        logger.info('Service data found:', serviceData);
+        logger.info('Service data keys:', Object.keys(serviceData));
       }
       if (!booking.customer_info) {
-        console.error('ERROR: No customer info found in booking');
+        logger.error('ERROR: No customer info found in booking');
       }
       if (!booking.total_price) {
-        console.error('ERROR: No total price found in booking');
+        logger.error('ERROR: No total price found in booking');
       }
     }
     
     if (error) {
-      console.error('=== BOOKING FETCH ERROR ===');
-      console.error('Error:', error);
+      logger.error('=== BOOKING FETCH ERROR ===');
+      logger.error('Error:', error);
     }
   }, [booking, error]);
 
@@ -324,7 +325,7 @@ export default function Payment() {
   // Additional validation for booking data
   const serviceData = booking?.service || (booking as any)?.services;
   if (booking && (!booking.total_price || !serviceData)) {
-    console.error('Payment page error - incomplete booking data:', booking);
+    logger.error('Payment page error - incomplete booking data:', booking);
     return (
       <div className="min-h-screen bg-gray-50">
         <Header />

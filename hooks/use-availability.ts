@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
+import { logger } from '@/lib/logger';
 
 export interface TimeSlot {
   time: string;
@@ -90,7 +91,7 @@ export const useAvailability = (options: UseAvailabilityOptions = {}) => {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch availability';
       setError(errorMessage);
-      console.error('Error fetching availability:', err);
+      logger.error('Error fetching availability:', err);
     } finally {
       setLoading(false);
     }

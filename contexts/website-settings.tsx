@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 
 interface WebsiteSettings {
   // Brand & Company
@@ -15,6 +16,8 @@ interface WebsiteSettings {
   theme_secondary_color: string;
   theme_accent_color: string;
   theme_font_family: string;
+  theme_font_size: string;
+  theme_border_radius: string;
   
   // Hero Section
   hero_title: string;
@@ -23,6 +26,21 @@ interface WebsiteSettings {
   hero_background_image: string;
   hero_cta_text: string;
   hero_secondary_cta_text: string;
+  
+  // About Section
+  about_title: string;
+  about_description: string;
+  about_image: string;
+  about_features: string;
+  
+  // Services Section
+  services_title: string;
+  services_subtitle: string;
+  services_description: string;
+  
+  // Testimonials Section
+  testimonials_title: string;
+  testimonials_subtitle: string;
   
   // Contact Info
   contact_email: string;
@@ -50,8 +68,25 @@ interface WebsiteSettings {
   testimonials_enabled: string;
   about_enabled: string;
   
+  // Navigation
+  nav_show_services: string;
+  nav_show_about: string;
+  nav_show_contact: string;
+  nav_show_booking: string;
+  
+  // CTA Sections
+  cta_title: string;
+  cta_description: string;
+  cta_button_text: string;
+  
+  // Pricing
+  pricing_enabled: string;
+  pricing_title: string;
+  pricing_subtitle: string;
+  
   // Advanced
   custom_css: string;
+  custom_head_code: string;
   maintenance_mode: string;
   analytics_google_id: string;
 }
@@ -74,6 +109,8 @@ const defaultSettings: WebsiteSettings = {
   theme_secondary_color: '#1e40af',
   theme_accent_color: '#3b82f6',
   theme_font_family: 'Inter',
+  theme_font_size: 'medium',
+  theme_border_radius: 'medium',
   
   hero_title: 'Professional Cleanout Services',
   hero_subtitle: 'Fast, reliable, and eco-friendly junk removal and moving services',
@@ -81,6 +118,18 @@ const defaultSettings: WebsiteSettings = {
   hero_background_image: 'https://images.pexels.com/photos/4099354/pexels-photo-4099354.jpeg?auto=compress&cs=tinysrgb&w=1200&h=600&fit=crop',
   hero_cta_text: 'Book Now',
   hero_secondary_cta_text: 'Learn More',
+  
+  about_title: 'About Our Services',
+  about_description: 'We provide professional cleanout and junk removal services with a focus on customer satisfaction and environmental responsibility.',
+  about_image: 'https://images.pexels.com/photos/4099354/pexels-photo-4099354.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop',
+  about_features: 'Fast Service, Eco-Friendly, Licensed & Insured, Affordable Pricing',
+  
+  services_title: 'Our Services',
+  services_subtitle: 'Professional cleanout solutions for every need',
+  services_description: 'From residential cleanouts to commercial junk removal, we handle it all.',
+  
+  testimonials_title: 'What Our Customers Say',
+  testimonials_subtitle: 'Real feedback from satisfied customers',
   
   contact_email: 'info@cleanoutspro.com',
   contact_phone: '(555) 123-4567',
@@ -103,7 +152,21 @@ const defaultSettings: WebsiteSettings = {
   testimonials_enabled: 'true',
   about_enabled: 'true',
   
+  nav_show_services: 'true',
+  nav_show_about: 'true',
+  nav_show_contact: 'true',
+  nav_show_booking: 'true',
+  
+  cta_title: 'Ready to Get Started?',
+  cta_description: 'Contact us today for a free estimate and let us help you reclaim your space.',
+  cta_button_text: 'Get Free Quote',
+  
+  pricing_enabled: 'true',
+  pricing_title: 'Transparent Pricing',
+  pricing_subtitle: 'No hidden fees, just honest pricing',
+  
   custom_css: '',
+  custom_head_code: '',
   maintenance_mode: 'false',
   analytics_google_id: '',
 };
@@ -127,7 +190,7 @@ export const WebsiteSettingsProvider: React.FC<{ children: React.ReactNode }> = 
         .select('*');
 
       if (error) {
-        console.error('Error loading website settings:', error);
+        logger.error('Error loading website settings:', error);
         return;
       }
 
@@ -154,7 +217,7 @@ export const WebsiteSettingsProvider: React.FC<{ children: React.ReactNode }> = 
         setSettings({ ...defaultSettings, ...settingsObj });
       }
     } catch (error) {
-      console.error('Error loading settings:', error);
+      logger.error('Error loading settings:', error);
     } finally {
       setLoading(false);
     }
@@ -175,7 +238,7 @@ export const WebsiteSettingsProvider: React.FC<{ children: React.ReactNode }> = 
           .upsert(update, { onConflict: 'key' });
         
         if (error) {
-          console.error('Error updating setting:', update.key, error);
+          logger.error('Error updating setting:', { key: update.key, error });
         }
       }
 
@@ -185,7 +248,7 @@ export const WebsiteSettingsProvider: React.FC<{ children: React.ReactNode }> = 
       // Refresh to get latest data
       await loadSettings();
     } catch (error) {
-      console.error('Error updating settings:', error);
+      logger.error('Error updating settings:', error);
       throw error;
     }
   };

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { isAdmin } from '@/lib/auth';
+import { logger } from '@/lib/logger';
 
 // Create Supabase client for server-side operations
 const supabase = createClient(
@@ -89,14 +90,14 @@ export async function POST(request: NextRequest) {
           .order('created_at', { ascending: false });
 
         if (error) {
-          console.error(`Error backing up ${tableName}:`, error);
+          logger.error(`Error backing up ${tableName}:`, error);
           continue;
         }
 
         backupData[tableName] = data || [];
         totalRecords += (data || []).length;
       } catch (error) {
-        console.error(`Error processing table ${tableName}:`, error);
+        logger.error(`Error processing table ${tableName}:`, error);
         backupData[tableName] = [];
       }
     }
@@ -150,7 +151,7 @@ export async function POST(request: NextRequest) {
         status: 'sent'
       });
     } catch (logError) {
-      console.error('Error logging backup creation:', logError);
+      logger.error('Error logging backup creation:', logError);
     }
 
     // Set download headers
@@ -163,7 +164,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(backup, { headers });
 
   } catch (error) {
-    console.error('Error creating backup:', error);
+    logger.error('Error creating backup:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -194,7 +195,7 @@ export async function GET(request: NextRequest) {
       .limit(20);
 
     if (error) {
-      console.error('Error fetching backup history:', error);
+      logger.error('Error fetching backup history:', error);
       return NextResponse.json({ error: 'Failed to fetch backup history' }, { status: 500 });
     }
 
@@ -223,7 +224,7 @@ export async function GET(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Error in backup GET:', error);
+    logger.error('Error in backup GET:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
