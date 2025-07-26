@@ -59,31 +59,16 @@ export const Header: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-3 group">
-            <div className="relative">
-              {settingsLoading ? (
-                <div className="h-10 w-10 rounded-xl bg-gradient-to-r from-gray-200 to-gray-300 animate-pulse shadow-md" />
-              ) : (
-                <img
-                  src={settings.brand_logo_url || 'https://images.pexels.com/photos/4099354/pexels-photo-4099354.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop'}
-                  alt={settings.brand_company_name || 'Logo'}
-                  className="h-10 w-10 rounded-xl object-cover shadow-md group-hover:shadow-lg transition-all duration-300"
-                />
-              )}
-              <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                <Sparkles className="w-2 h-2 text-white" />
-              </div>
-            </div>
-            <div className="flex flex-col">
-              {settingsLoading ? (
-                <div className="h-6 w-32 bg-gradient-to-r from-gray-200 to-gray-300 animate-pulse rounded" />
-              ) : (
-                <span className="text-xl font-black text-gradient group-hover:scale-105 transition-transform duration-300">
-                  {settings.brand_company_name || 'Loading...'}
-                </span>
-              )}
-             
-            </div>
+          <Link href="/" className="flex items-center group">
+            {settingsLoading ? (
+              <div className="h-12 w-auto bg-gradient-to-r from-gray-200 to-gray-300 animate-pulse rounded" />
+            ) : (
+              <img
+                src={settings.brand_logo_url || 'https://images.pexels.com/photos/4099354/pexels-photo-4099354.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop'}
+                alt="Logo"
+                className="h-12 w-auto object-contain transition-all duration-300 group-hover:scale-105"
+              />
+            )}
           </Link>
 
           {/* Desktop Navigation */}

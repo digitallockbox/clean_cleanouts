@@ -6,8 +6,6 @@ import { logger } from '@/lib/logger';
 
 interface WebsiteSettings {
   // Brand & Company
-  brand_company_name: string;
-  brand_tagline: string;
   brand_logo_url: string;
   brand_favicon_url: string;
   
@@ -100,8 +98,6 @@ interface WebsiteSettingsContextType {
 }
 
 const defaultSettings: WebsiteSettings = {
-  brand_company_name: 'CleanOuts Pro',
-  brand_tagline: 'Professional junk removal and moving services',
   brand_logo_url: '',
   brand_favicon_url: '',
   
@@ -300,8 +296,8 @@ export const useLegacySettings = () => {
   }
   
   return {
-    siteName: settings.brand_company_name,
-    siteDescription: settings.brand_tagline,
+    siteName: 'CleanOuts Pro',
+    siteDescription: 'Professional junk removal and moving services',
     primaryColor: settings.theme_primary_color,
     secondaryColor: settings.theme_secondary_color,
     logoUrl: settings.brand_logo_url,

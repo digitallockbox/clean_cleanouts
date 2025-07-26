@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { ButtonLoading, LoadingSpinner } from '@/components/ui/loading-spinner';
 import { useAuth } from '@/hooks/use-auth';
+import { supabase } from '@/lib/supabase';
 import { CreditCard, Trash2, Plus, Star, Shield, CheckCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { logger } from '@/lib/logger';

@@ -52,25 +52,16 @@ export const Footer: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Company Info */}
           <div className="lg:col-span-2">
-            <div className="flex items-center space-x-3 mb-6">
-              <div className="relative">
-                <img
-                  src={settings.brand_logo_url}
-                  alt={settings.brand_company_name}
-                  className="h-12 w-12 rounded-xl object-cover shadow-lg"
-                />
-                <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full"></div>
-              </div>
-              <div>
-                <span className="text-2xl font-black text-gradient bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                  {settings.brand_company_name}
-                </span>
-                <p className="text-sm text-gray-400 font-medium">Professional Service Excellence</p>
-              </div>
+            <div className="flex items-center justify-center lg:justify-start mb-6">
+              <img
+                src={settings.brand_logo_url || 'https://images.pexels.com/photos/4099354/pexels-photo-4099354.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop'}
+                alt="Logo"
+                className="h-16 w-auto object-contain"
+              />
             </div>
             
-            <p className="text-gray-300 mb-6 leading-relaxed max-w-md">
-              {settings.brand_tagline}{settings.footer_company_tagline_suffix}
+            <p className="text-gray-300 mb-6 leading-relaxed max-w-md text-center lg:text-left">
+              {settings.footer_company_description || 'Professional service excellence with unmatched quality and reliability.'}
             </p>
             
             <div className="space-y-4">
@@ -180,10 +171,10 @@ export const Footer: React.FC = () => {
           {/* Copyright */}
           <div className="text-center">
             <p className="text-gray-400 mb-2">
-              {settings.footer_copyright_prefix} {settings.brand_company_name}{settings.footer_copyright_suffix}
+              {settings.footer_copyright_text || '© 2024 All rights reserved.'}
             </p>
             <p className="text-sm text-gray-500 flex items-center justify-center">
-              {settings.footer_made_with_love.replace('❤️', '')} <Heart className="h-4 w-4 mx-1 text-red-500" /> {settings.footer_made_with_love.split('❤️')[1] || 'for our amazing customers'}
+              Made with <Heart className="h-4 w-4 mx-1 text-red-500" /> for our amazing customers
             </p>
           </div>
         </div>

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/use-auth';
 import { isAdmin, signOut } from '@/lib/auth';
+import { supabase } from '@/lib/supabase';
 import { ServiceManager } from '@/components/admin/ServiceManager';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { Button } from '@/components/ui/button';
@@ -92,7 +93,21 @@ export default function AdminDashboard() {
 
     try {
       setLoading(true);
-      const response = await fetch(`/api/admin/dashboard?period=${period}`);
+      
+      // Get the current session token
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session?.access_token) {
+        throw new Error('No authentication token found');
+      }
+
+      const response = await fetch(`/api/admin/dashboard?period=${period}`, {
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      
       const result = await response.json();
 
       if (!response.ok) {
@@ -123,9 +138,17 @@ export default function AdminDashboard() {
 
   const updateBookingStatus = async (bookingId: string, status: string) => {
     try {
+      // Get the current session token
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session?.access_token) {
+        throw new Error('No authentication token found');
+      }
+
       const response = await fetch(`/api/bookings/${bookingId}`, {
         method: 'PUT',
         headers: {
+          'Authorization': `Bearer ${session.access_token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ status }),

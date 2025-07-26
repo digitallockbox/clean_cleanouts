@@ -13,6 +13,7 @@ import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { useWebsiteSettings } from '@/contexts/website-settings-extended';
 import { toast } from 'sonner';
 import { logger } from '@/lib/logger';
+import { supabase } from '@/lib/supabase';
 import { 
   Settings, 
   Palette, 
@@ -51,7 +52,21 @@ export const SettingsComponent: React.FC = () => {
   const loadSettings = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/admin/website-settings');
+      
+      // Get the current session token
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session?.access_token) {
+        throw new Error('No authentication token found');
+      }
+
+      const response = await fetch('/api/admin/website-settings', {
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      
       const result = await response.json();
 
       if (!response.ok) {
@@ -82,9 +97,18 @@ export const SettingsComponent: React.FC = () => {
   const saveSettings = async () => {
     try {
       setSaving(true);
+      
+      // Get the current session token
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session?.access_token) {
+        throw new Error('No authentication token found');
+      }
+
       const response = await fetch('/api/admin/website-settings', {
         method: 'PUT',
         headers: {
+          'Authorization': `Bearer ${session.access_token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ settings }),
@@ -111,9 +135,17 @@ export const SettingsComponent: React.FC = () => {
 
   const exportData = async () => {
     try {
+      // Get the current session token
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session?.access_token) {
+        throw new Error('No authentication token found');
+      }
+
       const response = await fetch('/api/admin/export', {
         method: 'POST',
         headers: {
+          'Authorization': `Bearer ${session.access_token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -145,9 +177,17 @@ export const SettingsComponent: React.FC = () => {
 
   const createBackup = async () => {
     try {
+      // Get the current session token
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session?.access_token) {
+        throw new Error('No authentication token found');
+      }
+
       const response = await fetch('/api/admin/backup', {
         method: 'POST',
         headers: {
+          'Authorization': `Bearer ${session.access_token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -800,23 +840,12 @@ export const SettingsComponent: React.FC = () => {
                 Header & Navigation
               </CardTitle>
               <CardDescription>
-                Configure your website header, logo, and navigation menu
+                Configure your website header logo and navigation menu
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="company-name">Company Name (Header)</Label>
-                    <Input
-                      id="company-name"
-                      value={settings.brand_company_name?.value || ''}
-                      onChange={(e) => updateSetting('brand_company_name', e.target.value)}
-                      placeholder="CleanOuts Pro"
-                    />
-                    <p className="text-sm text-gray-500 mt-1">Appears in header next to logo</p>
-                  </div>
-
                   <div>
                     <Label htmlFor="logo-url">Logo URL</Label>
                     <Input
@@ -826,17 +855,6 @@ export const SettingsComponent: React.FC = () => {
                       placeholder="https://example.com/logo.png"
                     />
                     <p className="text-sm text-gray-500 mt-1">Logo displayed in header (recommended: 100x100px)</p>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="tagline">Company Tagline</Label>
-                    <Input
-                      id="tagline"
-                      value={settings.brand_tagline?.value || ''}
-                      onChange={(e) => updateSetting('brand_tagline', e.target.value)}
-                      placeholder="Professional Service"
-                    />
-                    <p className="text-sm text-gray-500 mt-1">Small text under company name in header</p>
                   </div>
                 </div>
 

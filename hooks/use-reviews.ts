@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/use-auth';
+import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
 import { logger } from '@/lib/logger';
 
@@ -78,10 +79,18 @@ export const useReviews = (options: UseReviewsOptions = {}) => {
     comment: string;
   }) => {
     try {
+      // Get the current session to include auth token
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session?.access_token) {
+        throw new Error('Authentication required to submit a review');
+      }
+
       const response = await fetch('/api/reviews', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
         },
         body: JSON.stringify(reviewData),
       });
